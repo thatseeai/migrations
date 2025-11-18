@@ -8,8 +8,6 @@ sidebar:
     variant: "success"
 ---
 
-# 프로젝트 설정 및 구조 변환
-
 Angular CLI로 생성된 프로젝트를 React 프로젝트로 변환하는 완벽한 가이드입니다.
 
 ## 개요

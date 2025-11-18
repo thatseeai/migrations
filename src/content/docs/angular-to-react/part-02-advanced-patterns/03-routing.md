@@ -5,8 +5,6 @@ sidebar:
   order: 3
 ---
 
-# 라우팅 시스템 마이그레이션
-
 Angular Router를 React Router v6로 변환하는 방법을 다룹니다.
 
 ## 개요

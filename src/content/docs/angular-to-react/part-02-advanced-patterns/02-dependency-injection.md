@@ -5,8 +5,6 @@ sidebar:
   order: 2
 ---
 
-# 의존성 주입 대체 패턴
-
 Angular의 의존성 주입(DI) 시스템을 React의 Context API와 Props로 대체하는 방법을 다룹니다.
 
 ## 개요

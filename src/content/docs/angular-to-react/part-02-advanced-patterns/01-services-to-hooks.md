@@ -5,8 +5,6 @@ sidebar:
   order: 1
 ---
 
-# 서비스를 Custom Hooks로 변환
-
 Angular의 Injectable 서비스를 React의 Custom Hooks로 변환하는 완벽한 가이드입니다.
 
 ## 개요

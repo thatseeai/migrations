@@ -5,8 +5,6 @@ sidebar:
   order: 4
 ---
 
-# Angular Material을 MUI로 마이그레이션
-
 Angular Material 컴포넌트를 Material-UI (MUI) v5로 변환하는 방법을 다룹니다.
 
 ## 개요
