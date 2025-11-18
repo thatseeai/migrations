@@ -14,18 +14,549 @@ Angular의 스타일 시스템을 React의 다양한 스타일링 솔루션으�
 **마이그레이션 난이도**: ⭐⭐⭐ (중급)
 **예상 소요 시간**: 2-3시간
 
-### 스타일링 옵션
+### 스타일링 옵션 비교
 
-| 방법 | 장점 | 단점 | 권장 |
-|-----|------|------|------|
-| CSS Modules | 스코프, 성능 | 동적 스타일 제한 | ✅ |
-| Styled-components | 동적, 테마 | 번들 크기 | ⚠️ |
-| Tailwind CSS | 빠른 개발 | 클래스명 길어짐 | ✅ |
-| Emotion | 유연성 | 러닝 커브 | ⚠️ |
+| 방법 | 장점 | 단점 | 권장 사용처 | 번들 영향 |
+|-----|------|------|------------|----------|
+| **CSS Modules** | 스코프, 성능 | 동적 스타일 제한 | 중대형 앱 | 0KB |
+| **Styled-components** | 동적, 테마 | 런타임 오버헤드 | 디자인 시스템 | +15KB |
+| **Tailwind CSS** | 빠른 개발 | 클래스명 길어짐 | 프로토타입 | +50KB(purge 전) |
+| **Emotion** | 유연성, 성능 | 학습 곡선 | 복잡한 앱 | +8KB |
 
-(Phase 3에서 자세한 예제 추가 예정)
+## 패턴 1: Component Styles → CSS Modules
+
+### Before (Angular)
+
+```typescript
+// user-card.component.ts
+@Component({
+  selector: 'app-user-card',
+  templateUrl: './user-card.component.html',
+  styleUrls: ['./user-card.component.css']
+})
+export class UserCardComponent {
+  @Input() user: User;
+  @Input() isActive = false;
+}
+```
+
+```css
+/* user-card.component.css */
+:host {
+  display: block;
+  padding: 16px;
+  border: 1px solid #ddd;
+}
+
+:host(.active) {
+  border-color: #007bff;
+  background: #f0f8ff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+}
+```
+
+### After (React + CSS Modules)
+
+```typescript
+// UserCard.module.css
+.card {
+  display: block;
+  padding: 16px;
+  border: 1px solid #ddd;
+}
+
+.card.active {
+  border-color: #007bff;
+  background: #f0f8ff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+}
+```
+
+```typescript
+// UserCard.tsx
+import styles from './UserCard.module.css';
+import classNames from 'classnames';
+
+interface UserCardProps {
+  user: User;
+  isActive?: boolean;
+}
+
+export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
+  return (
+    <div className={classNames(styles.card, { [styles.active]: isActive })}>
+      <div className={styles.header}>
+        <img src={user.avatar} className={styles.avatar} alt={user.name} />
+        <span className={styles.name}>{user.name}</span>
+      </div>
+    </div>
+  );
+};
+```
+
+**주요 변경**:
+- `:host` → 최상위 클래스 (`.card`)
+- `:host(.active)` → `.card.active`
+- `styleUrls` → `import styles from`
+- 자동 스코프 (해시 추가)
+
+## 패턴 2: ViewEncapsulation → Styled-components
+
+### Before (Angular)
+
+```typescript
+@Component({
+  selector: 'app-button',
+  template: `
+    <button [disabled]="disabled" (click)="onClick.emit()">
+      <ng-content></ng-content>
+    </button>
+  `,
+  styles: [`
+    :host {
+      display: inline-block;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #0056b3;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  `],
+  encapsulation: ViewEncapsulation.Emulated
+})
+export class ButtonComponent {
+  @Input() disabled = false;
+  @Output() onClick = new EventEmitter<void>();
+}
+```
+
+### After (React + Styled-components)
+
+```typescript
+import styled from 'styled-components';
+
+interface ButtonProps {
+  disabled?: boolean;
+  onClick?: () => void;
+  children: ReactNode;
+}
+
+const StyledButton = styled.button<{ disabled?: boolean }>`
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #0056b3;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const Button: FC<ButtonProps> = ({ disabled, onClick, children }) => {
+  return (
+    <StyledButton disabled={disabled} onClick={onClick}>
+      {children}
+    </StyledButton>
+  );
+};
+```
+
+**장점**:
+- Props 기반 동적 스타일
+- 자동 벤더 프리픽스
+- 테마 지원
+
+## 패턴 3: Global Styles
+
+### Before (Angular)
+
+```css
+/* styles.css (global) */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+```
+
+### After (React)
+
+**방법 1: 일반 CSS**
+```css
+/* src/index.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+```
+
+```typescript
+// main.tsx
+import './index.css';
+```
+
+**방법 2: Styled-components GlobalStyle**
+```typescript
+// styles/GlobalStyle.ts
+import { createGlobalStyle } from 'styled-components';
+
+export const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+  }
+`;
+
+// App.tsx
+import { GlobalStyle } from './styles/GlobalStyle';
+
+export const App = () => (
+  <>
+    <GlobalStyle />
+    <Main />
+  </>
+);
+```
+
+## 패턴 4: Tailwind CSS 사용
+
+### Before (Angular)
+
+```html
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">User Profile</h3>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">{{ user.email }}</p>
+  </div>
+</div>
+```
+
+```css
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+```
+
+### After (React + Tailwind)
+
+```typescript
+export const UserProfile = ({ user }: { user: User }) => {
+  return (
+    <div className="border border-gray-300 rounded-lg overflow-hidden">
+      <div className="px-4 py-4 bg-gray-50 border-b border-gray-300">
+        <h3 className="m-0 text-xl font-semibold">User Profile</h3>
+      </div>
+      <div className="px-4 py-4">
+        <p className="text-gray-600">{user.email}</p>
+      </div>
+    </div>
+  );
+};
+```
+
+**장점**:
+- 커스텀 CSS 불필요
+- 일관된 디자인 시스템
+- 빠른 프로토타이핑
+
+## 패턴 5: 동적 스타일 (ngStyle → 인라인/CSS-in-JS)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <div [ngStyle]="{
+      'background-color': backgroundColor,
+      'padding': padding + 'px',
+      'border-radius': borderRadius + 'px'
+    }">
+      Dynamic styles
+    </div>
+  `
+})
+export class DynamicComponent {
+  @Input() backgroundColor = '#fff';
+  @Input() padding = 16;
+  @Input() borderRadius = 4;
+}
+```
+
+### After (React)
+
+**방법 1: 인라인 스타일**
+```typescript
+interface DynamicBoxProps {
+  backgroundColor?: string;
+  padding?: number;
+  borderRadius?: number;
+}
+
+export const DynamicBox: FC<DynamicBoxProps> = ({
+  backgroundColor = '#fff',
+  padding = 16,
+  borderRadius = 4
+}) => {
+  return (
+    <div
+      style={{
+        backgroundColor,
+        padding: `${padding}px`,
+        borderRadius: `${borderRadius}px`
+      }}
+    >
+      Dynamic styles
+    </div>
+  );
+};
+```
+
+**방법 2: Styled-components (권장)**
+```typescript
+import styled from 'styled-components';
+
+interface BoxProps {
+  backgroundColor?: string;
+  padding?: number;
+  borderRadius?: number;
+}
+
+const StyledBox = styled.div<BoxProps>`
+  background-color: ${props => props.backgroundColor || '#fff'};
+  padding: ${props => props.padding || 16}px;
+  border-radius: ${props => props.borderRadius || 4}px;
+`;
+
+export const DynamicBox: FC<BoxProps> = (props) => {
+  return <StyledBox {...props}>Dynamic styles</StyledBox>;
+};
+```
+
+## 패턴 6: 테마 (Theme)
+
+### Before (Angular Material Theme)
+
+```scss
+@use '@angular/material' as mat;
+
+$my-primary: mat.define-palette(mat.$indigo-palette);
+$my-accent: mat.define-palette(mat.$pink-palette);
+
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+  )
+));
+
+@include mat.all-component-themes($my-theme);
+```
+
+### After (Styled-components Theme)
+
+```typescript
+// theme.ts
+export const lightTheme = {
+  colors: {
+    primary: '#3f51b5',
+    secondary: '#f50057',
+    background: '#ffffff',
+    text: '#000000',
+    border: '#e0e0e0'
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px'
+  },
+  borderRadius: {
+    sm: '4px',
+    md: '8px',
+    lg: '12px'
+  }
+};
+
+export const darkTheme = {
+  ...lightTheme,
+  colors: {
+    ...lightTheme.colors,
+    background: '#121212',
+    text: '#ffffff',
+    border: '#424242'
+  }
+};
+
+// App.tsx
+import { ThemeProvider } from 'styled-components';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+  const theme = isDark ? darkTheme : lightTheme;
+
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Main />
+    </ThemeProvider>
+  );
+};
+
+// 사용
+const Button = styled.button`
+  background: ${props => props.theme.colors.primary};
+  padding: ${props => props.theme.spacing.md};
+  border-radius: ${props => props.theme.borderRadius.md};
+`;
+```
+
+## 마이그레이션 체크리스트
+
+### 스타일 변환
+- [ ] 컴포넌트별 CSS 파일 확인
+- [ ] `:host` → 최상위 클래스 변환
+- [ ] Global styles 분리
+- [ ] ViewEncapsulation 전략 결정
+
+### 도구 선택
+- [ ] CSS Modules vs CSS-in-JS 결정
+- [ ] Tailwind 도입 여부 결정
+- [ ] 테마 시스템 구축
+
+### 최적화
+- [ ] 미사용 스타일 제거
+- [ ] Critical CSS 추출
+- [ ] CSS Purge 설정 (Tailwind)
+
+## 성능 비교
+
+| 방법 | 번들 크기 | 런타임 성능 | 개발 경험 |
+|-----|----------|-----------|----------|
+| CSS Modules | ★★★★★ | ★★★★★ | ★★★★☆ |
+| Styled-components | ★★★☆☆ | ★★★★☆ | ★★★★★ |
+| Tailwind | ★★★★☆ | ★★★★★ | ★★★★★ |
+| Emotion | ★★★★☆ | ★★★★★ | ★★★★☆ |
+
+## 권장사항
+
+1. **새 프로젝트**: Tailwind CSS + CSS Modules
+2. **디자인 시스템**: Styled-components + Theme
+3. **성능 중시**: CSS Modules
+4. **빠른 개발**: Tailwind CSS
 
 ## 다음 단계
 
-- [애니메이션](./03-animations)
-- [Material → MUI](./04-material-to-mui)
+- [애니메이션](./03-animations) - 애니메이션 라이브러리
+- [Material → MUI](./04-material-to-mui) - UI 컴포넌트 변환
