@@ -13,21 +13,949 @@ Angular 템플릿 문법을 React JSX로 변환하는 방법을 다룹니다.
 
 **마이그레이션 난이도**: ⭐⭐⭐ (중급)
 **예상 소요 시간**: 1-2시간
+**코드 변경량**: 평균 20-30% 감소
 
-### 문법 매핑 테이블
+### 핵심 차이점
 
-| Angular Template | React JSX | 설명 |
-|------------------|-----------|------|
+| 항목 | Angular Template | React JSX | 주요 차이 |
+|-----|------------------|-----------|----------|
+| 문법 | HTML-like | JavaScript + XML | JSX는 JS 표현식 |
+| 조건문 | `*ngIf` | `{cond && ...}` | JS 논리 연산자 |
+| 반복문 | `*ngFor` | `.map()` | JS 배열 메서드 |
+| 바인딩 | `[prop]`, `(event)` | `prop={}`, `onClick={}` | 단일 중괄호 |
+| 클래스 | `[class]`, `[ngClass]` | `className` | 예약어 변경 |
+
+## 패턴 1: 보간 (Interpolation)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <div>
+      <h1>{{ title }}</h1>
+      <p>{{ user.name }} ({{ user.age }}세)</p>
+      <span>{{ calculateTotal() }}</span>
+      <div>{{ 1 + 1 }}</div>
+    </div>
+  `
+})
+export class MyComponent {
+  title = 'Hello';
+  user = { name: 'John', age: 30 };
+
+  calculateTotal(): number {
+    return 100;
+  }
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const title = 'Hello';
+  const user = { name: 'John', age: 30 };
+
+  const calculateTotal = () => {
+    return 100;
+  };
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <p>{user.name} ({user.age}세)</p>
+      <span>{calculateTotal()}</span>
+      <div>{1 + 1}</div>
+    </div>
+  );
+};
+```
+
+**주요 변경**:
+- `{{ }}` → `{ }` (단일 중괄호)
+- 모든 JS 표현식 사용 가능
+
+## 패턴 2: 속성 바인딩 (Property Binding)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 속성 바인딩 -->
+    <img [src]="imageUrl" [alt]="imageAlt">
+    <button [disabled]="isDisabled">Click</button>
+    <input [value]="username" [placeholder]="hint">
+
+    <!-- attr 바인딩 -->
+    <div [attr.data-id]="userId">User</div>
+    <table [attr.aria-label]="tableLabel">...</table>
+  `
+})
+export class MyComponent {
+  imageUrl = '/logo.png';
+  imageAlt = 'Logo';
+  isDisabled = true;
+  username = 'john';
+  hint = 'Enter name';
+  userId = '123';
+  tableLabel = 'User list';
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const imageUrl = '/logo.png';
+  const imageAlt = 'Logo';
+  const isDisabled = true;
+  const username = 'john';
+  const hint = 'Enter name';
+  const userId = '123';
+  const tableLabel = 'User list';
+
+  return (
+    <>
+      {/* 속성 바인딩 */}
+      <img src={imageUrl} alt={imageAlt} />
+      <button disabled={isDisabled}>Click</button>
+      <input value={username} placeholder={hint} />
+
+      {/* data-* 속성 */}
+      <div data-id={userId}>User</div>
+      <table aria-label={tableLabel}>...</table>
+    </>
+  );
+};
+```
+
+**차이점**:
+- `[attr]="value"` → `attr={value}`
+- `attr.` prefix 불필요
+- `disabled={true}` → `disabled`도 가능
+
+## 패턴 3: 이벤트 바인딩 (Event Binding)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <button (click)="handleClick()">Click</button>
+    <button (click)="handleClick($event)">With Event</button>
+    <input (input)="handleInput($event)">
+    <form (submit)="handleSubmit($event)">
+      <button type="submit">Submit</button>
+    </form>
+    <div (mouseenter)="onHover()" (mouseleave)="onLeave()">
+      Hover me
+    </div>
+  `
+})
+export class MyComponent {
+  handleClick(event?: MouseEvent): void {
+    console.log('Clicked', event);
+  }
+
+  handleInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    console.log(value);
+  }
+
+  handleSubmit(event: Event): void {
+    event.preventDefault();
+    console.log('Form submitted');
+  }
+
+  onHover(): void {
+    console.log('Hover');
+  }
+
+  onLeave(): void {
+    console.log('Leave');
+  }
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const handleClick = (event?: React.MouseEvent) => {
+    console.log('Clicked', event);
+  };
+
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    console.log(value);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log('Form submitted');
+  };
+
+  const onHover = () => {
+    console.log('Hover');
+  };
+
+  const onLeave = () => {
+    console.log('Leave');
+  };
+
+  return (
+    <>
+      <button onClick={handleClick}>Click</button>
+      <button onClick={(e) => handleClick(e)}>With Event</button>
+      <input onChange={handleInput} />
+      <form onSubmit={handleSubmit}>
+        <button type="submit">Submit</button>
+      </form>
+      <div onMouseEnter={onHover} onMouseLeave={onLeave}>
+        Hover me
+      </div>
+    </>
+  );
+};
+```
+
+**중요 변경**:
+- `(click)` → `onClick` (camelCase)
+- `(input)` → `onChange` (React 컨벤션)
+- `$event` → 함수 파라미터로 자동 전달
+- `React.MouseEvent`, `React.ChangeEvent` 타입 사용
+
+## 패턴 4: 양방향 바인딩 (Two-way Binding)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <input [(ngModel)]="username">
+    <p>Hello, {{ username }}</p>
+
+    <input [(ngModel)]="email" type="email">
+    <p>{{ email }}</p>
+  `
+})
+export class MyComponent {
+  username = '';
+  email = '';
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+
+  return (
+    <>
+      <input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <p>Hello, {username}</p>
+
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <p>{email}</p>
+    </>
+  );
+};
+```
+
+**주요 차이**:
+- `[(ngModel)]` → `value` + `onChange`
+- React는 명시적 양방향 바인딩
+
+## 패턴 5: 조건부 렌더링 (*ngIf)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 기본 *ngIf -->
+    <div *ngIf="isVisible">Visible</div>
+
+    <!-- *ngIf else -->
+    <div *ngIf="isLoggedIn; else loginPrompt">
+      Welcome back!
+    </div>
+    <ng-template #loginPrompt>
+      <div>Please log in</div>
+    </ng-template>
+
+    <!-- *ngIf then else -->
+    <div *ngIf="hasData; then dataView else noData"></div>
+    <ng-template #dataView>
+      <div>{{ data }}</div>
+    </ng-template>
+    <ng-template #noData>
+      <div>No data</div>
+    </ng-template>
+
+    <!-- *ngIf with as -->
+    <div *ngIf="user$ | async as user">
+      {{ user.name }}
+    </div>
+  `
+})
+export class MyComponent {
+  isVisible = true;
+  isLoggedIn = false;
+  hasData = true;
+  data = 'Some data';
+  user$ = of({ name: 'John' });
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const isVisible = true;
+  const isLoggedIn = false;
+  const hasData = true;
+  const data = 'Some data';
+  const user = { name: 'John' };
+
+  return (
+    <>
+      {/* 기본 조건부 렌더링 */}
+      {isVisible && <div>Visible</div>}
+
+      {/* if-else (삼항 연산자) */}
+      {isLoggedIn ? (
+        <div>Welcome back!</div>
+      ) : (
+        <div>Please log in</div>
+      )}
+
+      {/* 복잡한 조건 */}
+      {hasData ? (
+        <div>{data}</div>
+      ) : (
+        <div>No data</div>
+      )}
+
+      {/* 변수 할당과 함께 */}
+      {user && <div>{user.name}</div>}
+    </>
+  );
+};
+```
+
+**패턴 요약**:
+- `*ngIf="cond"` → `{cond && <div>}`
+- `*ngIf else` → `{cond ? <A> : <B>}`
+- `ng-template` 불필요
+
+## 패턴 6: 리스트 렌더링 (*ngFor)
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 기본 *ngFor -->
+    <div *ngFor="let item of items">
+      {{ item.name }}
+    </div>
+
+    <!-- index 사용 -->
+    <div *ngFor="let item of items; let i = index">
+      {{ i + 1 }}. {{ item.name }}
+    </div>
+
+    <!-- trackBy (성능 최적화) -->
+    <div *ngFor="let item of items; trackBy: trackByFn">
+      {{ item.name }}
+    </div>
+
+    <!-- first, last, even, odd -->
+    <div *ngFor="let item of items; let first = first; let last = last">
+      <span *ngIf="first">First: </span>
+      {{ item.name }}
+      <span *ngIf="last"> (Last)</span>
+    </div>
+  `
+})
+export class MyComponent {
+  items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' },
+    { id: 3, name: 'Item 3' }
+  ];
+
+  trackByFn(index: number, item: any): number {
+    return item.id;
+  }
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' },
+    { id: 3, name: 'Item 3' }
+  ];
+
+  return (
+    <>
+      {/* 기본 map */}
+      {items.map(item => (
+        <div key={item.id}>{item.name}</div>
+      ))}
+
+      {/* index 사용 */}
+      {items.map((item, i) => (
+        <div key={item.id}>
+          {i + 1}. {item.name}
+        </div>
+      ))}
+
+      {/* key로 성능 최적화 (trackBy와 동일) */}
+      {items.map(item => (
+        <div key={item.id}>{item.name}</div>
+      ))}
+
+      {/* first, last 조건 */}
+      {items.map((item, i) => (
+        <div key={item.id}>
+          {i === 0 && <span>First: </span>}
+          {item.name}
+          {i === items.length - 1 && <span> (Last)</span>}
+        </div>
+      ))}
+    </>
+  );
+};
+```
+
+**핵심 차이**:
+- `*ngFor` → `.map()`
+- `trackBy` → `key` prop (필수!)
+- index, first, last → 수동 계산
+
+## 패턴 7: 클래스 바인딩
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 단일 클래스 -->
+    <div [class.active]="isActive">Item</div>
+
+    <!-- 여러 클래스 -->
+    <div [ngClass]="{ 'active': isActive, 'disabled': isDisabled }">
+      Item
+    </div>
+
+    <!-- 문자열/배열 -->
+    <div [ngClass]="['base-class', additionalClass]">Item</div>
+    <div [ngClass]="classString">Item</div>
+  `
+})
+export class MyComponent {
+  isActive = true;
+  isDisabled = false;
+  additionalClass = 'highlight';
+  classString = 'class-one class-two';
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const isActive = true;
+  const isDisabled = false;
+  const additionalClass = 'highlight';
+  const classString = 'class-one class-two';
+
+  return (
+    <>
+      {/* 조건부 클래스 */}
+      <div className={isActive ? 'active' : ''}>Item</div>
+
+      {/* 여러 클래스 (수동) */}
+      <div
+        className={`
+          ${isActive ? 'active' : ''}
+          ${isDisabled ? 'disabled' : ''}
+        `.trim()}
+      >
+        Item
+      </div>
+
+      {/* 배열 join */}
+      <div className={['base-class', additionalClass].join(' ')}>
+        Item
+      </div>
+
+      {/* 문자열 */}
+      <div className={classString}>Item</div>
+
+      {/* classnames 라이브러리 (권장) */}
+      <div className={classNames({ active: isActive, disabled: isDisabled })}>
+        Item
+      </div>
+    </>
+  );
+};
+```
+
+**Best Practice**: `classnames` 라이브러리 사용
+
+```typescript
+import classNames from 'classnames';
+
+<div className={classNames('base', { active: isActive, disabled: isDisabled })}>
+  Item
+</div>
+```
+
+## 패턴 8: 스타일 바인딩
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 단일 스타일 -->
+    <div [style.color]="textColor">Colored</div>
+    <div [style.width.px]="width">Box</div>
+
+    <!-- 여러 스타일 -->
+    <div [ngStyle]="{ 'color': textColor, 'font-size': fontSize + 'px' }">
+      Styled
+    </div>
+  `
+})
+export class MyComponent {
+  textColor = 'red';
+  width = 200;
+  fontSize = 16;
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const textColor = 'red';
+  const width = 200;
+  const fontSize = 16;
+
+  return (
+    <>
+      {/* 단일 스타일 */}
+      <div style={{ color: textColor }}>Colored</div>
+      <div style={{ width: `${width}px` }}>Box</div>
+
+      {/* 여러 스타일 */}
+      <div style={{ color: textColor, fontSize: `${fontSize}px` }}>
+        Styled
+      </div>
+
+      {/* 스타일 객체 분리 (권장) */}
+      <div style={styles.container}>Styled</div>
+    </>
+  );
+};
+
+const styles = {
+  container: {
+    color: 'red',
+    fontSize: '16px'
+  }
+};
+```
+
+**주의사항**:
+- camelCase 사용 (`font-size` → `fontSize`)
+- 숫자는 자동으로 `px` 추가 (일부 속성)
+- 문자열은 명시적으로 단위 포함
+
+## 패턴 9: Pipe → 함수/라이브러리
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- 내장 파이프 -->
+    <div>{{ name | uppercase }}</div>
+    <div>{{ name | lowercase }}</div>
+    <div>{{ price | currency:'USD' }}</div>
+    <div>{{ birthday | date:'yyyy-MM-dd' }}</div>
+    <div>{{ data | json }}</div>
+
+    <!-- 체이닝 -->
+    <div>{{ name | uppercase | slice:0:5 }}</div>
+
+    <!-- 커스텀 파이프 -->
+    <div>{{ text | truncate:20 }}</div>
+  `
+})
+export class MyComponent {
+  name = 'john doe';
+  price = 1234.56;
+  birthday = new Date();
+  data = { foo: 'bar' };
+  text = 'Very long text...';
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const name = 'john doe';
+  const price = 1234.56;
+  const birthday = new Date();
+  const data = { foo: 'bar' };
+  const text = 'Very long text...';
+
+  return (
+    <>
+      {/* 내장 메서드 */}
+      <div>{name.toUpperCase()}</div>
+      <div>{name.toLowerCase()}</div>
+
+      {/* 라이브러리 (Intl, date-fns 등) */}
+      <div>{new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(price)}</div>
+
+      <div>{format(birthday, 'yyyy-MM-dd')}</div>
+
+      <div>{JSON.stringify(data, null, 2)}</div>
+
+      {/* 체이닝 */}
+      <div>{name.toUpperCase().slice(0, 5)}</div>
+
+      {/* 커스텀 함수 */}
+      <div>{truncate(text, 20)}</div>
+    </>
+  );
+};
+
+// 유틸 함수
+const truncate = (str: string, length: number) => {
+  return str.length > length ? str.slice(0, length) + '...' : str;
+};
+```
+
+**권장 라이브러리**:
+- 날짜: `date-fns` 또는 `dayjs`
+- 통화: `Intl.NumberFormat`
+- 문자열: 직접 함수 작성 또는 `lodash`
+
+## 패턴 10: ng-container & ng-template
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- ng-container (그룹화, DOM 노드 없음) -->
+    <ng-container *ngIf="showContent">
+      <div>Content 1</div>
+      <div>Content 2</div>
+    </ng-container>
+
+    <!-- ng-template (재사용 템플릿) -->
+    <ng-template #userCard let-user>
+      <div class="card">
+        <h3>{{ user.name }}</h3>
+        <p>{{ user.email }}</p>
+      </div>
+    </ng-template>
+
+    <ng-container *ngTemplateOutlet="userCard; context: { $implicit: currentUser }">
+    </ng-container>
+  `
+})
+export class MyComponent {
+  showContent = true;
+  currentUser = { name: 'John', email: 'john@example.com' };
+}
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const showContent = true;
+  const currentUser = { name: 'John', email: 'john@example.com' };
+
+  // 재사용 컴포넌트
+  const UserCard = ({ user }: { user: User }) => (
+    <div className="card">
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Fragment (ng-container와 동일) */}
+      {showContent && (
+        <>
+          <div>Content 1</div>
+          <div>Content 2</div>
+        </>
+      )}
+
+      {/* 재사용 컴포넌트 */}
+      <UserCard user={currentUser} />
+    </>
+  );
+};
+```
+
+**차이점**:
+- `ng-container` → `<>...</>` (Fragment)
+- `ng-template` → 별도 컴포넌트 또는 함수
+
+## 패턴 11: Content Projection (ng-content)
+
+### Before (Angular)
+
+```typescript
+// card.component.ts
+@Component({
+  selector: 'app-card',
+  template: `
+    <div class="card">
+      <div class="header">
+        <ng-content select="[header]"></ng-content>
+      </div>
+      <div class="body">
+        <ng-content></ng-content>
+      </div>
+      <div class="footer">
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  `
+})
+export class CardComponent {}
+
+// 사용
+@Component({
+  template: `
+    <app-card>
+      <h2 header>Title</h2>
+      <p>Main content</p>
+      <button footer>Action</button>
+    </app-card>
+  `
+})
+export class ParentComponent {}
+```
+
+### After (React)
+
+```typescript
+// Card.tsx
+interface CardProps {
+  header?: ReactNode;
+  children: ReactNode;
+  footer?: ReactNode;
+}
+
+export const Card: FC<CardProps> = ({ header, children, footer }) => {
+  return (
+    <div className="card">
+      {header && <div className="header">{header}</div>}
+      <div className="body">{children}</div>
+      {footer && <div className="footer">{footer}</div>}
+    </div>
+  );
+};
+
+// 사용
+export const ParentComponent = () => {
+  return (
+    <Card
+      header={<h2>Title</h2>}
+      footer={<button>Action</button>}
+    >
+      <p>Main content</p>
+    </Card>
+  );
+};
+```
+
+**장점**:
+- 더 명시적
+- TypeScript 타입 지원 우수
+- props로 전달하여 유연성 향상
+
+## 패턴 12: 특수 속성 변환
+
+### Before (Angular)
+
+```typescript
+@Component({
+  template: `
+    <!-- class 속성 -->
+    <div class="static-class" [class.dynamic]="isDynamic">
+
+    <!-- for 속성 (label) -->
+    <label for="username">Username</label>
+    <input id="username">
+
+    <!-- 주석 -->
+    <!-- This is a comment -->
+    <div>Content</div>
+  `
+})
+```
+
+### After (React)
+
+```typescript
+export const MyComponent = () => {
+  const isDynamic = true;
+
+  return (
+    <>
+      {/* className (class 아님!) */}
+      <div className={`static-class ${isDynamic ? 'dynamic' : ''}`}>
+
+      {/* htmlFor (for 아님!) */}
+      <label htmlFor="username">Username</label>
+      <input id="username" />
+
+      {/* 주석 (JSX 문법) */}
+      {/* This is a comment */}
+      <div>Content</div>
+    </>
+  );
+};
+```
+
+**예약어 변경**:
+- `class` → `className`
+- `for` → `htmlFor`
+- `tabindex` → `tabIndex`
+
+## 비교 테이블: 전체 매핑
+
+| Angular | React | 설명 |
+|---------|-------|------|
 | `{{ value }}` | `{value}` | 보간 |
-| `[attr]="value"` | `attr={value}` | 속성 바인딩 |
-| `(click)="fn()"` | `onClick={fn}` | 이벤트 |
+| `[prop]="value"` | `prop={value}` | 속성 바인딩 |
+| `(event)="fn()"` | `onEvent={fn}` | 이벤트 바인딩 |
+| `[(ngModel)]="value"` | `value={v} onChange={setV}` | 양방향 바인딩 |
 | `*ngIf="cond"` | `{cond && <div>}` | 조건부 렌더링 |
-| `*ngFor="let x of xs"` | `{xs.map(x => <div key={x.id}>)}` | 리스트 |
-| `[class.active]="isActive"` | `className={isActive ? 'active' : ''}` | 클래스 |
+| `*ngFor="let x of xs"` | `{xs.map(x => ...)}` | 리스트 렌더링 |
+| `[class.active]="isActive"` | `className={isActive ? 'active' : ''}` | 클래스 바인딩 |
+| `[style.color]="color"` | `style={{ color }}` | 스타일 바인딩 |
+| `{{ value \| pipe }}` | `{fn(value)}` | 파이프/변환 |
+| `<ng-container>` | `<></>` | Fragment |
+| `<ng-content>` | `{children}` | Content projection |
+| `#templateRef` | `useRef()` | 참조 |
 
-(Phase 3에서 자세한 예제 추가 예정)
+## 마이그레이션 체크리스트
+
+### 문법 변환
+- [ ] `{{ }}` → `{ }`로 모든 보간 변경
+- [ ] `[attr]` → `attr={}` 속성 바인딩 변경
+- [ ] `(event)` → `onEvent` 이벤트 변경
+- [ ] `*ngIf` → 조건부 렌더링
+- [ ] `*ngFor` → `.map()` + key prop
+- [ ] `class` → `className`
+- [ ] `for` → `htmlFor`
+
+### 구조 변환
+- [ ] `ng-container` → Fragment
+- [ ] `ng-template` → 컴포넌트 분리
+- [ ] `ng-content` → props/children
+- [ ] Pipe → 함수/라이브러리
+
+### 검증
+- [ ] 모든 조건부 렌더링 동작 확인
+- [ ] 리스트 key prop 누락 확인
+- [ ] 이벤트 핸들러 정상 작동 확인
+- [ ] 스타일/클래스 적용 확인
+
+## 실전 팁
+
+### ✅ 권장사항
+
+1. **Fragment 적극 활용**
+   ```typescript
+   // ✅ 좋은 예
+   return (
+     <>
+       <Header />
+       <Main />
+     </>
+   );
+   ```
+
+2. **key prop 필수**
+   ```typescript
+   // ✅ 항상 고유한 ID 사용
+   {items.map(item => <div key={item.id}>{item.name}</div>)}
+   ```
+
+3. **classnames 라이브러리**
+   ```typescript
+   import cx from 'classnames';
+   <div className={cx('base', { active: isActive })} />
+   ```
+
+### ⚠️ 흔한 실수
+
+1. **key에 index 사용**
+   ```typescript
+   // ❌ 나쁜 예 (재정렬 시 버그)
+   {items.map((item, i) => <div key={i}>{item}</div>)}
+
+   // ✅ 좋은 예
+   {items.map(item => <div key={item.id}>{item}</div>)}
+   ```
+
+2. **함수 즉시 실행**
+   ```typescript
+   // ❌ 잘못됨 - 렌더링 시 즉시 실행
+   <button onClick={handleClick()}>Click</button>
+
+   // ✅ 올바름 - 함수 참조 전달
+   <button onClick={handleClick}>Click</button>
+   ```
+
+3. **class 대신 className**
+   ```typescript
+   // ❌ 작동하지 않음
+   <div class="container">
+
+   // ✅ 올바름
+   <div className="container">
+   ```
 
 ## 다음 단계
 
-- [CSS 마이그레이션](./02-css-migration)
-- [Material → MUI](./04-material-to-mui)
+- [CSS 마이그레이션](./02-css-migration) - 스타일링 솔루션
+- [Material → MUI](./04-material-to-mui) - UI 컴포넌트 변환
+- [성능 최적화](../part-04-tooling/04-performance)
