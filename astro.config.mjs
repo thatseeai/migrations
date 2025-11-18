@@ -13,9 +13,13 @@ export default defineConfig({
         src: './src/assets/logo.svg',
         replacesTitle: false,
       },
-      social: {
-        github: 'https://github.com/thatseeai/migrations',
-      },
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/thatseeai/migrations',
+        },
+      ],
       sidebar: [
         {
           label: 'Angular to React',
