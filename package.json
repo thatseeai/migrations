@@ -1,0 +1,28 @@
+{
+  "name": "migration-ebooks",
+  "version": "1.0.0",
+  "description": "Migration guides eBook platform built with Astro Starlight",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,astro,md,mdx,json}\"",
+    "validate": "npm run type-check && npm run lint && npm run build"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.28.4",
+    "astro": "^4.16.17",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "typescript": "^5.6.3"
+  }
+}
