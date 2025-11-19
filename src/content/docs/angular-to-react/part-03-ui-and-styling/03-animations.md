@@ -5,8 +5,6 @@ sidebar:
   order: 3
 ---
 
-# 애니메이션 변환
-
 Angular Animations를 React의 애니메이션 솔루션으로 변환하는 방법을 다룹니다.
 
 ## 개요

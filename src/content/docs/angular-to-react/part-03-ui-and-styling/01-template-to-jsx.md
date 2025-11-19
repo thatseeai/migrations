@@ -5,8 +5,6 @@ sidebar:
   order: 1
 ---
 
-# Template을 JSX로 변환
-
 Angular 템플릿 문법을 React JSX로 변환하는 방법을 다룹니다.
 
 ## 개요

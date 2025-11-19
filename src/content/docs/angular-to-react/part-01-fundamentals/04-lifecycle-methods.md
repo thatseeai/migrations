@@ -8,8 +8,6 @@ sidebar:
     variant: "success"
 ---
 
-# 라이프사이클 메서드 변환
-
 Angular의 라이프사이클 훅을 React의 `useEffect`로 변환하는 방법을 다룹니다.
 
 ## 개요

@@ -5,8 +5,6 @@ sidebar:
   order: 2
 ---
 
-# 테스트 마이그레이션
-
 Jasmine/Karma 테스트를 Jest와 React Testing Library로 변환하는 방법을 다룹니다.
 
 ## 개요

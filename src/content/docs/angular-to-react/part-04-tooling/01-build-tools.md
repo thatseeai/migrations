@@ -5,8 +5,6 @@ sidebar:
   order: 1
 ---
 
-# 빌드 도구 마이그레이션
-
 Angular CLI와 Webpack 설정을 Vite로 마이그레이션하는 방법을 다룹니다.
 
 ## 개요

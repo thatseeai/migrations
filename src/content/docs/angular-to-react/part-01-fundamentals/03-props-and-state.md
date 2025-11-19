@@ -8,8 +8,6 @@ sidebar:
     variant: "success"
 ---
 
-# Props와 State 관리
-
 Angular의 `@Input`/`@Output`과 클래스 필드를 React의 Props와 `useState`로 변환하는 방법을 다룹니다.
 
 ## 개요

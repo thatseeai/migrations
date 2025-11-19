@@ -5,8 +5,6 @@ sidebar:
   order: 4
 ---
 
-# 상태 관리 마이그레이션
-
 NgRx를 Redux Toolkit으로, RxJS를 React Query로 변환하는 방법을 다룹니다.
 
 ## 개요

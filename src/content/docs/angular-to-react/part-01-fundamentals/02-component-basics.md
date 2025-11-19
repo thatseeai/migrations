@@ -8,8 +8,6 @@ sidebar:
     variant: "success"
 ---
 
-# 컴포넌트 기초 변환
-
 Angular Component Class를 React Function Component로 변환하는 방법을 다룹니다.
 
 ## 개요
