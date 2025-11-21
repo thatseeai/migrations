@@ -1,0 +1,78 @@
+---
+// TOC Toggle Component - 목차 표시/숨김 토글 버튼
+---
+
+<button id="toc-toggle" class="toc-toggle-button" aria-label="목차 토글">
+  <span class="toc-icon">📋</span>
+  <span class="toc-text">목차</span>
+</button>
+
+<script>
+  // TOC 토글 기능
+  function initTocToggle() {
+    const toggleButton = document.getElementById('toc-toggle');
+    const body = document.body;
+
+    // 로컬 스토리지에서 TOC 상태 복원
+    const tocHidden = localStorage.getItem('toc-hidden') === 'true';
+    if (tocHidden) {
+      body.classList.add('toc-hidden');
+      updateButtonText(true);
+    }
+
+    // 토글 버튼 클릭 이벤트
+    toggleButton?.addEventListener('click', () => {
+      const isHidden = body.classList.toggle('toc-hidden');
+      localStorage.setItem('toc-hidden', isHidden.toString());
+      updateButtonText(isHidden);
+    });
+
+    function updateButtonText(isHidden: boolean) {
+      const textElement = toggleButton?.querySelector('.toc-text');
+      if (textElement) {
+        textElement.textContent = isHidden ? '목차 표시' : '목차 숨김';
+      }
+    }
+
+    // 키보드 단축키 지원 (Ctrl/Cmd + /)
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        toggleButton?.click();
+      }
+    });
+  }
+
+  // 페이지 로드 시 초기화
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTocToggle);
+  } else {
+    initTocToggle();
+  }
+
+  // Astro의 view transitions를 위한 재초기화
+  document.addEventListener('astro:page-load', initTocToggle);
+</script>
+
+<style>
+  .toc-toggle-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .toc-icon {
+    font-size: 1.1rem;
+  }
+
+  .toc-text {
+    font-size: 0.875rem;
+  }
+
+  /* 모바일에서는 텍스트 숨김 */
+  @media (max-width: 768px) {
+    .toc-text {
+      display: none;
+    }
+  }
+</style>

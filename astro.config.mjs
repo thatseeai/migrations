@@ -20,6 +20,9 @@ export default defineConfig({
           href: 'https://github.com/thatseeai/migrations',
         },
       ],
+      components: {
+        Head: './src/components/Head.astro',
+      },
       sidebar: [
         {
           label: 'Angular to React',

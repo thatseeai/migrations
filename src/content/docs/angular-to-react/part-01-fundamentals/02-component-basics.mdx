@@ -8,6 +8,8 @@ sidebar:
     variant: "success"
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular Component Class를 React Function Component로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -25,9 +27,11 @@ Angular Component Class를 React Function Component로 변환하는 방법을 �
 | 스타일 | 별도 CSS 파일 | CSS/Styled-components | 선택 가능 |
 | 상태 관리 | 클래스 필드 | `useState` Hook | 더 명시적 |
 
-## Before (Angular)
+<SideBySide>
+  <div slot="left">
 
 ### 기본 컴포넌트
+
 ```typescript
 // user-card.component.ts
 import { Component, Input } from '@angular/core';
@@ -101,9 +105,11 @@ export class UserCardComponent {
 }
 ```
 
-## After (React 18+)
+  </div>
+  <div slot="right">
 
 ### Function Component
+
 ```typescript
 // UserCard.tsx
 import { FC, useMemo } from 'react';
@@ -121,7 +127,10 @@ interface UserCardProps {
   isActive?: boolean;
 }
 
-export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
+export const UserCard: FC<UserCardProps> = ({
+  user,
+  isActive = false
+}) => {
   const handleClick = () => {
     console.log('User clicked:', user.name);
   };
@@ -148,11 +157,16 @@ export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 변환 패턴
 
 ### 1. 데코레이터 → Export
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Component({
   selector: 'app-button',
@@ -161,16 +175,23 @@ export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
 export class ButtonComponent {}
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const Button = () => {
   return <button>Click me</button>;
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 2. Input/Output → Props
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Component({...})
 export class ChildComponent {
@@ -184,7 +205,9 @@ export class ChildComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface ChildProps {
   title: string;
@@ -211,9 +234,14 @@ export const Child: FC<ChildProps> = ({
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 3. Getter → useMemo
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class ProductComponent {
   @Input() price!: number;
@@ -225,7 +253,9 @@ export class ProductComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface ProductProps {
   price: number;
@@ -241,9 +271,14 @@ export const Product: FC<ProductProps> = ({ price, quantity }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 4. 이벤트 핸들러
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class FormComponent {
   handleSubmit(event: Event): void {
@@ -257,7 +292,9 @@ export class FormComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const Form = () => {
   const handleSubmit = (event: React.FormEvent) => {
@@ -276,6 +313,9 @@ export const Form = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 단계
 
@@ -334,7 +374,9 @@ export const MyComponent: FC<MyComponentProps> = ({
 
 ### 예제 1: 조건부 렌더링
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```html
 <div *ngIf="isLoggedIn">
   <h1>Welcome, {{ userName }}!</h1>
@@ -344,7 +386,9 @@ export const MyComponent: FC<MyComponentProps> = ({
 </div>
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```tsx
 {isLoggedIn ? (
   <div>
@@ -357,9 +401,14 @@ export const MyComponent: FC<MyComponentProps> = ({
 )}
 ```
 
+  </div>
+</SideBySide>
+
 ### 예제 2: 리스트 렌더링
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```html
 <ul>
   <li *ngFor="let item of items; let i = index; trackBy: trackByFn">
@@ -368,7 +417,9 @@ export const MyComponent: FC<MyComponentProps> = ({
 </ul>
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```tsx
 <ul>
   {items.map((item, index) => (
@@ -379,9 +430,14 @@ export const MyComponent: FC<MyComponentProps> = ({
 </ul>
 ```
 
+  </div>
+</SideBySide>
+
 ### 예제 3: 클래스 바인딩
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```html
 <div
   [class]="baseClass"
@@ -390,7 +446,9 @@ export const MyComponent: FC<MyComponentProps> = ({
 </div>
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```tsx
 import classNames from 'classnames';
 
@@ -409,6 +467,9 @@ import classNames from 'classnames';
 `.trim()}>
 </div>
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 

@@ -1,14 +1,13 @@
-/* Migration eBooks - Minimal Custom Styles */
-/* Starlight의 기본 테마를 사용하고 필요한 부분만 커스터마이징 */
+/* Migration eBooks - Enhanced Styles for Side-by-Side Code Comparison */
 
 :root {
-  /* 브랜드 색상만 커스터마이징 */
+  /* 브랜드 색상 */
   --sl-color-accent-low: #1e1b4b;
   --sl-color-accent: #6366f1;
   --sl-color-accent-high: #a5b4fc;
 
-  /* 콘텐츠 너비 */
-  --sl-content-width: 50rem;
+  /* 콘텐츠 너비 확대 (Before/After 좌우 배치를 위해) */
+  --sl-content-width: 75rem;
   --sl-sidebar-width: 18rem;
 }
 
@@ -19,15 +18,113 @@
   --sl-color-accent-high: #4f46e5;
 }
 
-/* 코드 블록 여백 조정 */
+/* ============================================
+   TOC (Table of Contents) 토글 기능
+   ============================================ */
+
+/* TOC 토글 버튼 */
+.toc-toggle-button {
+  position: fixed;
+  top: 5rem;
+  right: 1rem;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background: var(--sl-color-accent);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.toc-toggle-button:hover {
+  background: var(--sl-color-accent-high);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toc-toggle-button:active {
+  transform: translateY(0);
+}
+
+/* TOC가 숨겨질 때 */
+body.toc-hidden .right-sidebar-container {
+  display: none !important;
+}
+
+/* TOC가 숨겨질 때 콘텐츠 영역 확장 */
+body.toc-hidden .main-frame {
+  padding-right: 1rem !important;
+}
+
+/* ============================================
+   코드 블록 스타일 개선
+   ============================================ */
+
+/* 일반 코드 블록 여백 */
 pre {
   margin: 1.5rem 0;
 }
 
-/* 테이블 여백 */
+/* 코드 블록 스크롤 개선 */
+pre {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* ============================================
+   Before/After 섹션 자동 좌우 배치
+   ============================================ */
+
+/* SideBySide 컴포넌트 내부의 첫 번째 요소 마진 강제 제거 */
+.side-by-side-wrapper .side-by-side-panel {
+  margin: 0 !important;
+}
+
+.side-by-side-wrapper .panel-content {
+  margin: 0 !important;
+}
+
+.side-by-side-wrapper .panel-content > div {
+  margin: 0 !important;
+}
+
+/* 첫 번째 제목의 상단 마진 제거 */
+.side-by-side-wrapper .panel-content > div > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Starlight 마크다운 스타일 덮어쓰기 */
+.sl-markdown-content .side-by-side-wrapper .panel-content h1:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h2:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h3:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h4:first-child {
+  margin-top: 0 !important;
+}
+
+/* ============================================
+   테이블 스타일
+   ============================================ */
+
 table {
   margin: 1.5rem 0;
+  width: 100%;
 }
+
+/* 테이블 반응형 */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* ============================================
+   제목 및 링크 스타일
+   ============================================ */
 
 /* 제목 앵커 스크롤 여백 */
 .heading-wrapper {
@@ -42,4 +139,60 @@ a {
 
 a:hover {
   text-decoration-thickness: 2px;
+}
+
+/* ============================================
+   반응형 레이아웃
+   ============================================ */
+
+/* 데스크톱: TOC 표시 */
+@media (min-width: 1200px) {
+  .right-sidebar {
+    display: block;
+  }
+}
+
+/* 중간 화면: TOC 기본 숨김, 토글 버튼 표시 */
+@media (max-width: 1199px) {
+  .toc-toggle-button {
+    display: block;
+  }
+
+  .right-sidebar-container {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--sl-color-bg);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  body.toc-visible .right-sidebar-container {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   코드 비교를 위한 유틸리티 클래스
+   ============================================ */
+
+/* 코드 블록 하이라이트 */
+.code-highlight {
+  background: var(--sl-color-accent-low);
+  border-left: 3px solid var(--sl-color-accent);
+  padding-left: 1rem;
+}
+
+/* 변경사항 표시 */
+.code-added {
+  background-color: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid #22c55e;
+}
+
+.code-removed {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
 }

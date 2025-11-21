@@ -1,0 +1,119 @@
+---
+// SideBySide.astro - Before/After 코드 블록을 좌우 배치하는 컴포넌트
+interface Props {
+  leftTitle?: string;
+  rightTitle?: string;
+}
+
+const { leftTitle = "Before (Angular)", rightTitle = "After (React 18+)" } = Astro.props;
+---
+
+<div class="side-by-side-wrapper">
+  <div class="side-by-side-container">
+    <div class="side-by-side-panel left-panel">
+      <h3 class="panel-title">{leftTitle}</h3>
+      <div class="panel-content">
+        <slot name="left" />
+      </div>
+    </div>
+    <div class="side-by-side-panel right-panel">
+      <h3 class="panel-title">{rightTitle}</h3>
+      <div class="panel-content">
+        <slot name="right" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .side-by-side-wrapper {
+    margin: 2rem 0;
+  }
+
+  .side-by-side-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .side-by-side-panel {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    position: relative;
+    margin: 0 !important;
+  }
+
+  .panel-title {
+    margin: 0 !important;
+    padding: 0.5rem 0.75rem;
+    background: var(--sl-color-accent-low);
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    line-height: 1.5;
+  }
+
+  .panel-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.75rem;
+    background: var(--sl-color-bg-inline);
+    border-radius: 0 0 0.5rem 0.5rem;
+    margin: 0 !important;
+  }
+
+  /* 슬롯 내부의 div 정렬 - 모든 마진 강제 제거 */
+  .panel-content :global(> div) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 0.75rem;
+    margin: 0 !important;
+  }
+
+  /* 슬롯 내부의 모든 제목 정렬 - 완전히 통일 */
+  .panel-content :global(h1),
+  .panel-content :global(h2),
+  .panel-content :global(h3),
+  .panel-content :global(h4) {
+    margin: 0 0 0.75rem 0 !important;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  /* 코드 블록 스타일 조정 */
+  .panel-content :global(pre) {
+    margin: 0.5rem 0;
+    border-radius: 0.375rem;
+    overflow: auto;
+  }
+
+  /* 첫 번째 코드 블록의 상단 마진 */
+  .panel-content :global(h3 + pre) {
+    margin-top: 0.75rem;
+  }
+
+  /* 마지막 코드 블록의 하단 패딩 */
+  .panel-content :global(> div) {
+    padding-bottom: 0.75rem;
+  }
+
+  /* 반응형: 좁은 화면에서는 세로 배치 */
+  @media (max-width: 1200px) {
+    .side-by-side-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  /* 매우 넓은 화면에서 TOC가 숨겨질 때 더 넓게 */
+  @media (min-width: 1400px) {
+    .side-by-side-wrapper.toc-hidden {
+      max-width: none;
+    }
+  }
+</style>
