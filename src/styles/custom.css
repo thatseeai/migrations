@@ -79,13 +79,31 @@ pre {
    Before/After 섹션 자동 좌우 배치
    ============================================ */
 
-/* h2 제목이 "Before"를 포함하는 경우부터 "After" 섹션까지 묶어서 처리 */
-.sl-markdown-content h2:has(+ * pre, + h3 + * pre) {
-  /* Before/After 섹션 감지를 위한 마커 */
+/* SideBySide 컴포넌트 내부의 첫 번째 요소 마진 강제 제거 */
+.side-by-side-wrapper .side-by-side-panel {
+  margin: 0 !important;
 }
 
-/* Before (Angular) 섹션과 After (React) 섹션을 감싸는 컨테이너 */
-/* CSS만으로는 완벽한 자동 감지가 어려우므로, 직접 마크다운에서 컴포넌트 사용 권장 */
+.side-by-side-wrapper .panel-content {
+  margin: 0 !important;
+}
+
+.side-by-side-wrapper .panel-content > div {
+  margin: 0 !important;
+}
+
+/* 첫 번째 제목의 상단 마진 제거 */
+.side-by-side-wrapper .panel-content > div > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Starlight 마크다운 스타일 덮어쓰기 */
+.sl-markdown-content .side-by-side-wrapper .panel-content h1:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h2:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h3:first-child,
+.sl-markdown-content .side-by-side-wrapper .panel-content h4:first-child {
+  margin-top: 0 !important;
+}
 
 /* ============================================
    테이블 스타일
