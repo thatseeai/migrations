@@ -5,6 +5,8 @@ sidebar:
   order: 4
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 NgRx를 Redux Toolkit으로, RxJS를 React Query로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -25,7 +27,8 @@ NgRx를 Redux Toolkit으로, RxJS를 React Query로 변환하는 방법을 다�
 
 ## 패턴 1: 기본 NgRx → Redux Toolkit
 
-### Before (Angular + NgRx)
+<SideBySide leftTitle="Angular + NgRx" rightTitle="React + Redux Toolkit">
+  <div slot="left">
 
 ```typescript
 // state/counter/counter.actions.ts
@@ -84,7 +87,8 @@ export class CounterComponent {
 }
 ```
 
-### After (React + Redux Toolkit)
+  </div>
+  <div slot="right">
 
 ```typescript
 // store/counterSlice.ts
@@ -148,6 +152,9 @@ export const Counter = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **개선사항**:
 - 액션, 리듀서가 하나의 slice로 통합 (3개 파일 → 1개)
 - Immer로 불변성 자동 관리
@@ -155,7 +162,8 @@ export const Counter = () => {
 
 ## 패턴 2: 비동기 처리 (NgRx Effects → createAsyncThunk)
 
-### Before (Angular + NgRx Effects)
+<SideBySide leftTitle="Angular + NgRx Effects" rightTitle="React + Redux Toolkit">
+  <div slot="left">
 
 ```typescript
 // user.actions.ts
@@ -218,7 +226,8 @@ export class UserListComponent implements OnInit {
 }
 ```
 
-### After (React + Redux Toolkit)
+  </div>
+  <div slot="right">
 
 ```typescript
 // store/userSlice.ts
@@ -298,6 +307,9 @@ export const UserList = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **개선사항**:
 - Effects 파일 불필요 (30% 코드 감소)
 - pending/fulfilled/rejected 자동 생성
@@ -363,7 +375,8 @@ export const UserList = () => {
 
 ## 패턴 4: Mutations (생성/수정/삭제)
 
-### Before (NgRx Effects)
+<SideBySide leftTitle="NgRx Effects" rightTitle="React Query">
+  <div slot="left">
 
 ```typescript
 // user.actions.ts
@@ -400,7 +413,8 @@ on(createUserSuccess, (state, { user }) => ({
 }))
 ```
 
-### After (React Query)
+  </div>
+  <div slot="right">
 
 ```typescript
 // UserForm.tsx
@@ -443,6 +457,9 @@ export const UserForm = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - 낙관적 업데이트 쉬움
 - 자동 캐시 무효화
@@ -450,7 +467,8 @@ export const UserForm = () => {
 
 ## 패턴 5: Entity Adapter 패턴
 
-### Before (NgRx EntityAdapter)
+<SideBySide leftTitle="NgRx EntityAdapter" rightTitle="Redux Toolkit EntityAdapter">
+  <div slot="left">
 
 ```typescript
 // user.reducer.ts
@@ -493,7 +511,8 @@ export const {
 } = userAdapter.getSelectors();
 ```
 
-### After (Redux Toolkit EntityAdapter)
+  </div>
+  <div slot="right">
 
 ```typescript
 // store/userSlice.ts
@@ -539,6 +558,9 @@ export const {
 export default userSlice.reducer;
 ```
 
+  </div>
+</SideBySide>
+
 **React Query 방식 (더 간단)**:
 
 ```typescript
@@ -562,7 +584,8 @@ export const useUsers = () => {
 
 ## 패턴 6: RxJS Observables → React Query
 
-### Before (RxJS)
+<SideBySide leftTitle="RxJS" rightTitle="React Query">
+  <div slot="left">
 
 ```typescript
 // user.service.ts
@@ -606,7 +629,8 @@ export class UserListComponent {
 }
 ```
 
-### After (React Query)
+  </div>
+  <div slot="right">
 
 ```typescript
 // hooks/useUsers.ts
@@ -656,6 +680,9 @@ export const UserSearch = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **개선사항**:
 - BehaviorSubject 불필요
 - interval 불필요 (refetchInterval 사용)
@@ -664,7 +691,8 @@ export const UserSearch = () => {
 
 ## 패턴 7: 복잡한 Selector 체인
 
-### Before (NgRx)
+<SideBySide leftTitle="NgRx" rightTitle="React + Redux Toolkit">
+  <div slot="left">
 
 ```typescript
 // selectors.ts
@@ -698,7 +726,8 @@ export class DashboardComponent {
 }
 ```
 
-### After (React + Redux Toolkit)
+  </div>
+  <div slot="right">
 
 ```typescript
 // store/selectors.ts
@@ -749,6 +778,9 @@ export const Dashboard = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **React Query 방식 (더 간단)**:
 
 ```typescript
@@ -780,7 +812,8 @@ export const Dashboard = () => {
 
 ## 패턴 8: 낙관적 업데이트 (Optimistic Updates)
 
-### Before (NgRx)
+<SideBySide leftTitle="NgRx" rightTitle="React Query">
+  <div slot="left">
 
 ```typescript
 // effects.ts
@@ -812,7 +845,8 @@ updateUser$ = createEffect(() =>
 );
 ```
 
-### After (React Query)
+  </div>
+  <div slot="right">
 
 ```typescript
 // hooks/useUpdateUser.ts
@@ -871,6 +905,9 @@ export const UserEdit = ({ user }: { user: User }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - UI 즉시 업데이트 (빠른 UX)
 - 자동 롤백 기능
@@ -878,7 +915,8 @@ export const UserEdit = ({ user }: { user: User }) => {
 
 ## 패턴 9: 상태 영속화 (Persistence)
 
-### Before (NgRx + localStorage)
+<SideBySide leftTitle="NgRx + localStorage" rightTitle="Redux Toolkit + Redux Persist">
+  <div slot="left">
 
 ```typescript
 // meta-reducers.ts
@@ -900,7 +938,8 @@ const savedState = JSON.parse(localStorage.getItem('appState') || '{}');
 StoreModule.forRoot(reducers, { initialState: savedState })
 ```
 
-### After (Redux Toolkit + Redux Persist)
+  </div>
+  <div slot="right">
 
 ```typescript
 // store/store.ts
@@ -940,6 +979,9 @@ export const App = () => (
   </Provider>
 );
 ```
+
+  </div>
+</SideBySide>
 
 **React Query Persist**:
 

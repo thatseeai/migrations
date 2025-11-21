@@ -5,6 +5,8 @@ sidebar:
   order: 3
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 React 애플리케이션을 효과적으로 디버깅하는 방법을 다룹니다.
 
 ## 개요
@@ -81,7 +83,8 @@ useUser.displayName = 'useUser';
 
 ## 패턴 2: console 디버깅
 
-### Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
 
 ```typescript
 export class UserComponent implements OnInit {
@@ -104,7 +107,8 @@ export class UserComponent implements OnInit {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const UserProfile = ({ user }: UserProfileProps) => {
@@ -156,6 +160,9 @@ function useWhyDidYouUpdate(name: string, props: Record<string, any>) {
   });
 }
 ```
+
+  </div>
+</SideBySide>
 
 ## 패턴 3: Debugger 중단점 사용
 
@@ -313,7 +320,8 @@ export const App = () => {
 
 ## 패턴 7: Error Boundary
 
-### Before (Angular ErrorHandler)
+<SideBySide leftTitle="Angular ErrorHandler" rightTitle="React Error Boundary">
+  <div slot="left">
 
 ```typescript
 @Injectable()
@@ -332,7 +340,8 @@ export class GlobalErrorHandler implements ErrorHandler {
 export class AppModule {}
 ```
 
-### After (React Error Boundary)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { Component, ErrorInfo, ReactNode } from 'react';
@@ -403,6 +412,9 @@ export const App = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 패턴 8: 커스텀 Devtools Component
 

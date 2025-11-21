@@ -5,6 +5,8 @@ sidebar:
   order: 4
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 React 애플리케이션의 성능을 최적화하는 다양한 기법을 다룹니다.
 
 ## 개요
@@ -25,7 +27,8 @@ React 애플리케이션의 성능을 최적화하는 다양한 기법을 다룹
 
 ## 패턴 1: React.memo로 불필요한 리렌더링 방지
 
-### Before (최적화 전)
+<SideBySide leftTitle="최적화 전" rightTitle="React.memo 적용">
+  <div slot="left">
 
 ```typescript
 // 부모 컴포넌트가 리렌더링되면 자식도 항상 리렌더링됨
@@ -59,7 +62,8 @@ export const UserList = () => {
 };
 ```
 
-### After (React.memo 적용)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { memo } from 'react';
@@ -97,11 +101,15 @@ export const UserCardWithCustomCompare = memo(
 );
 ```
 
+  </div>
+</SideBySide>
+
 **결과**: count 변경 시 UserCard 리렌더링 **0회** (이전: 2회)
 
 ## 패턴 2: useMemo로 무거운 계산 캐싱
 
-### Before (최적화 전)
+<SideBySide leftTitle="최적화 전" rightTitle="useMemo 적용">
+  <div slot="left">
 
 ```typescript
 export const ProductList = ({ products }: { products: Product[] }) => {
@@ -124,7 +132,8 @@ export const ProductList = ({ products }: { products: Product[] }) => {
 };
 ```
 
-### After (useMemo 적용)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { useMemo } from 'react';
@@ -155,6 +164,9 @@ export const ProductList = ({ products }: { products: Product[] }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주의**: 간단한 계산은 useMemo 불필요 (오버헤드만 증가)
 
 ```typescript
@@ -167,7 +179,8 @@ const fullName = `${firstName} ${lastName}`;
 
 ## 패턴 3: useCallback으로 함수 재생성 방지
 
-### Before (최적화 전)
+<SideBySide leftTitle="최적화 전" rightTitle="useCallback 적용">
+  <div slot="left">
 
 ```typescript
 export const TodoList = () => {
@@ -199,7 +212,8 @@ export const TodoList = () => {
 };
 ```
 
-### After (useCallback 적용)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { useCallback } from 'react';
@@ -254,9 +268,13 @@ export const TodoItem = memo(({
 });
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 4: Code Splitting (React.lazy + Suspense)
 
-### Before (전체 번들 로드)
+<SideBySide leftTitle="전체 번들 로드" rightTitle="Lazy Loading">
+  <div slot="left">
 
 ```typescript
 // App.tsx - 모든 페이지를 한 번에 로드
@@ -279,7 +297,8 @@ export const App = () => {
 // 결과: 초기 번들 크기 500KB
 ```
 
-### After (Lazy Loading)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { lazy, Suspense } from 'react';
@@ -306,6 +325,9 @@ export const App = () => {
 // 결과: 초기 번들 100KB + 각 페이지 50-100KB (필요 시 로드)
 ```
 
+  </div>
+</SideBySide>
+
 **중첩 Suspense (더 나은 UX)**:
 
 ```typescript
@@ -327,7 +349,8 @@ export const App = () => {
 
 ## 패턴 5: Virtualization (긴 리스트 최적화)
 
-### Before (10,000개 항목 렌더링)
+<SideBySide leftTitle="10,000개 항목 렌더링" rightTitle="react-window 사용">
+  <div slot="left">
 
 ```typescript
 export const UserList = ({ users }: { users: User[] }) => {
@@ -344,7 +367,8 @@ export const UserList = ({ users }: { users: User[] }) => {
 // 결과: 초기 렌더링 3-5초, 스크롤 버벅임
 ```
 
-### After (react-window 사용)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { FixedSizeList } from 'react-window';
@@ -369,6 +393,9 @@ export const UserList = ({ users }: { users: User[] }) => {
 
 // 결과: 초기 렌더링 0.1초, 부드러운 스크롤
 ```
+
+  </div>
+</SideBySide>
 
 **가변 높이 리스트 (react-window)**:
 
@@ -498,7 +525,8 @@ export const ImageWithPlaceholder = ({ src, alt }: ImageProps) => {
 
 ## 패턴 7: Debouncing & Throttling
 
-### Before (매 입력마다 API 호출)
+<SideBySide leftTitle="매 입력마다 API 호출" rightTitle="Debounced search">
+  <div slot="left">
 
 ```typescript
 export const SearchUsers = () => {
@@ -526,7 +554,8 @@ export const SearchUsers = () => {
 // r -> re -> rea -> reac -> react
 ```
 
-### After (Debounced search)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -573,6 +602,9 @@ export const SearchUsers = () => {
 // 결과: "react"를 입력해도 1번의 API 호출 (마지막만)
 ```
 
+  </div>
+</SideBySide>
+
 **Throttle (스크롤 이벤트 등)**:
 
 ```typescript
@@ -614,7 +646,8 @@ export const ScrollTracker = () => {
 
 ## 패턴 8: Web Workers (무거운 계산 오프로드)
 
-### Before (메인 스레드 블로킹)
+<SideBySide leftTitle="메인 스레드 블로킹" rightTitle="Web Worker 사용">
+  <div slot="left">
 
 ```typescript
 export const DataProcessor = ({ data }: { data: number[] }) => {
@@ -640,7 +673,8 @@ export const DataProcessor = ({ data }: { data: number[] }) => {
 // 결과: 버튼 클릭 시 UI 5-10초 멈춤
 ```
 
-### After (Web Worker 사용)
+  </div>
+  <div slot="right">
 
 ```typescript
 // worker.ts
@@ -689,6 +723,9 @@ export const DataProcessor = ({ data }: { data: number[] }) => {
 
 // 결과: UI는 멈추지 않고 백그라운드에서 계산
 ```
+
+  </div>
+</SideBySide>
 
 ## 패턴 9: React 18 Concurrent Features
 
@@ -1133,7 +1170,7 @@ reportWebVitals((metric) => {
 **언제 최적화해야 하나?**:
 1. **하지 말아야 할 때**:
    - 문제가 없을 때 (premature optimization)
-   - 작은 컴포넌트 (<10줄)
+   - 작은 컴포넌트 (&lt;10줄)
    - 간단한 계산
 
 2. **해야 할 때**:

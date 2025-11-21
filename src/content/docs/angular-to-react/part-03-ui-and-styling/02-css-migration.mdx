@@ -5,6 +5,8 @@ sidebar:
   order: 2
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular의 스타일 시스템을 React의 다양한 스타일링 솔루션으로 마이그레이션하는 방법을 다룹니다.
 
 ## 개요
@@ -23,8 +25,10 @@ Angular의 스타일 시스템을 React의 다양한 스타일링 솔루션으�
 
 ## 패턴 1: Component Styles → CSS Modules
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React + CSS Modules)">
+  <div slot="left">
 
+### TypeScript
 ```typescript
 // user-card.component.ts
 @Component({
@@ -38,6 +42,7 @@ export class UserCardComponent {
 }
 ```
 
+### CSS
 ```css
 /* user-card.component.css */
 :host {
@@ -68,10 +73,12 @@ export class UserCardComponent {
 }
 ```
 
-### After (React + CSS Modules)
+  </div>
+  <div slot="right">
 
-```typescript
-// UserCard.module.css
+### CSS Module
+```css
+/* UserCard.module.css */
 .card {
   display: block;
   padding: 16px;
@@ -100,6 +107,7 @@ export class UserCardComponent {
 }
 ```
 
+### Component
 ```typescript
 // UserCard.tsx
 import styles from './UserCard.module.css';
@@ -122,6 +130,9 @@ export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주요 변경**:
 - `:host` → 최상위 클래스 (`.card`)
 - `:host(.active)` → `.card.active`
@@ -130,7 +141,8 @@ export const UserCard: FC<UserCardProps> = ({ user, isActive = false }) => {
 
 ## 패턴 2: ViewEncapsulation → Styled-components
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React + Styled-components)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -172,7 +184,8 @@ export class ButtonComponent {
 }
 ```
 
-### After (React + Styled-components)
+  </div>
+  <div slot="right">
 
 ```typescript
 import styled from 'styled-components';
@@ -211,6 +224,9 @@ export const Button: FC<ButtonProps> = ({ disabled, onClick, children }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - Props 기반 동적 스타일
 - 자동 벤더 프리픽스
@@ -218,7 +234,8 @@ export const Button: FC<ButtonProps> = ({ disabled, onClick, children }) => {
 
 ## 패턴 3: Global Styles
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```css
 /* styles.css (global) */
@@ -242,9 +259,10 @@ body {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
-**방법 1: 일반 CSS**
+### 방법 1: 일반 CSS
 ```css
 /* src/index.css */
 * {
@@ -272,7 +290,7 @@ body {
 import './index.css';
 ```
 
-**방법 2: Styled-components GlobalStyle**
+### 방법 2: Styled-components
 ```typescript
 // styles/GlobalStyle.ts
 import { createGlobalStyle } from 'styled-components';
@@ -303,10 +321,15 @@ export const App = () => (
 );
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 4: Tailwind CSS 사용
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React + Tailwind)">
+  <div slot="left">
 
+### Template
 ```html
 <div class="card">
   <div class="card-header">
@@ -318,6 +341,7 @@ export const App = () => (
 </div>
 ```
 
+### CSS
 ```css
 .card {
   border: 1px solid #ddd;
@@ -346,7 +370,8 @@ export const App = () => (
 }
 ```
 
-### After (React + Tailwind)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const UserProfile = ({ user }: { user: User }) => {
@@ -363,6 +388,9 @@ export const UserProfile = ({ user }: { user: User }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - 커스텀 CSS 불필요
 - 일관된 디자인 시스템
@@ -370,7 +398,8 @@ export const UserProfile = ({ user }: { user: User }) => {
 
 ## 패턴 5: 동적 스타일 (ngStyle → 인라인/CSS-in-JS)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -391,9 +420,10 @@ export class DynamicComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
-**방법 1: 인라인 스타일**
+### 방법 1: 인라인 스타일
 ```typescript
 interface DynamicBoxProps {
   backgroundColor?: string;
@@ -420,7 +450,7 @@ export const DynamicBox: FC<DynamicBoxProps> = ({
 };
 ```
 
-**방법 2: Styled-components (권장)**
+### 방법 2: Styled-components (권장)
 ```typescript
 import styled from 'styled-components';
 
@@ -441,9 +471,13 @@ export const DynamicBox: FC<BoxProps> = (props) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 6: 테마 (Theme)
 
-### Before (Angular Material Theme)
+<SideBySide leftTitle="Before (Angular Material Theme)" rightTitle="After (Styled-components Theme)">
+  <div slot="left">
 
 ```scss
 @use '@angular/material' as mat;
@@ -461,7 +495,8 @@ $my-theme: mat.define-light-theme((
 @include mat.all-component-themes($my-theme);
 ```
 
-### After (Styled-components Theme)
+  </div>
+  <div slot="right">
 
 ```typescript
 // theme.ts
@@ -519,6 +554,9 @@ const Button = styled.button`
   border-radius: ${props => props.theme.borderRadius.md};
 `;
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 
