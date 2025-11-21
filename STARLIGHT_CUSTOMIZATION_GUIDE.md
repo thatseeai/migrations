@@ -126,15 +126,26 @@ const {
     margin: 0 !important;
   }
 
-  /* 제목 스타일 */
+  /* 제목 스타일 - 테마별 색상 최적화 */
   .panel-title {
     margin: 0 !important;
     padding: 0.5rem 0.75rem;
-    background: var(--sl-color-accent-low);
     border-radius: 0.5rem 0.5rem 0 0;
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--sl-color-white);
+    border-bottom: 2px solid var(--sl-color-hairline);
+  }
+
+  /* Light theme: 밝은 배경 + 진한 텍스트 */
+  :global([data-theme='light']) .panel-title {
+    background: rgba(99, 102, 241, 0.08);
+    color: rgb(30, 27, 75);
+  }
+
+  /* Dark theme: 중간 톤 배경 + 밝은 텍스트 */
+  :global([data-theme='dark']) .panel-title {
+    background: rgba(129, 140, 248, 0.15);
+    color: rgb(199, 210, 254);
   }
 
   /* 콘텐츠 영역 */
@@ -239,6 +250,27 @@ export const Button = () => {
 }
 ```
 
+#### ✅ 테마별 색상 최적화
+```css
+/* Light theme: 연한 배경 + 진한 텍스트 */
+:global([data-theme='light']) .panel-title {
+  background: rgba(99, 102, 241, 0.08);
+  color: rgb(30, 27, 75);
+}
+
+/* Dark theme: 중간 톤 배경 + 밝은 텍스트 */
+:global([data-theme='dark']) .panel-title {
+  background: rgba(129, 140, 248, 0.15);
+  color: rgb(199, 210, 254);
+}
+```
+
+**이유**:
+- 단일 색상은 한 테마에서만 잘 보임
+- Light: 너무 어두운 배경은 이질감
+- Dark: 너무 밝은 배경은 눈부심
+- 투명도 활용으로 테마와 자연스럽게 조화
+
 ---
 
 ## 사례 2: Starlight 빌트인 컴포넌트 오버라이드
@@ -259,8 +291,9 @@ export default defineConfig({
     starlight({
       title: 'My Docs',
       components: {
-        // Starlight의 기본 Head 컴포넌트를 오버라이드
+        // Starlight의 기본 컴포넌트를 오버라이드
         Head: './src/components/Head.astro',
+        TwoColumnContent: './src/components/TwoColumnContent.astro',
       },
     }),
   ],
@@ -382,6 +415,94 @@ const tocHidden = localStorage.getItem('toc-hidden') === 'true';
 
 ---
 
+## 사례 2.5: TwoColumnContent 오버라이드 (TOC Overlay)
+
+### 목표
+TOC를 Overlay 방식으로 변경하여 숨길 때 메인 콘텐츠가 전체 너비 사용
+
+### 2.5.1 문제점
+Starlight의 기본 레이아웃은 Flexbox로 TOC와 메인 콘텐츠를 배치합니다.
+TOC를 `display: none`으로 숨겨도 width가 고정되어 있어 공간이 확보되지 않습니다.
+
+### 2.5.2 해결책: Overlay 방식
+
+**파일**: `src/components/TwoColumnContent.astro`
+
+```astro
+---
+const { starlightRoute } = Astro.locals as any;
+---
+
+<div class="lg:sl-flex">
+  {
+    starlightRoute.toc && (
+      <aside class="right-sidebar-container print:hidden">
+        <div class="right-sidebar">
+          <slot name="right-sidebar" />
+        </div>
+      </aside>
+    )
+  }
+  <div class="main-pane"><slot /></div>
+</div>
+
+<style>
+  @layer starlight.core {
+    @media (min-width: 72rem) {
+      /* TOC를 Overlay로 변경 - fixed position */
+      .right-sidebar-container {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--sl-sidebar-width);
+        z-index: 100;
+        transition: transform 0.3s ease;
+        background: var(--sl-color-bg);
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 메인 패널은 항상 전체 너비 */
+      .main-pane {
+        width: 100%;
+      }
+
+      /* TOC 숨김: 우측으로 슬라이드 아웃 */
+      :global(body.toc-hidden) .right-sidebar-container {
+        transform: translateX(100%);
+      }
+    }
+  }
+</style>
+```
+
+### 2.5.3 핵심 포인트
+
+#### ✅ Fixed Position + Transform
+```css
+.right-sidebar-container {
+  position: fixed;  /* 콘텐츠 위에 떠있음 */
+  transform: translateX(100%);  /* 숨김 상태 */
+}
+```
+
+**장점**:
+- 메인 콘텐츠 레이아웃에 영향 없음
+- transform은 GPU 가속으로 부드러운 애니메이션
+- Starlight의 복잡한 width 계산 우회
+
+#### ✅ 메인 패널 단순화
+```css
+.main-pane {
+  width: 100%;  /* 항상 전체 너비 */
+}
+```
+
+**Before**: 복잡한 calc() 계산식으로 width 조정
+**After**: 항상 100%로 단순화
+
+---
+
 ## 사례 3: 전역 CSS 커스터마이징
 
 ### 목표
@@ -485,15 +606,8 @@ export default defineConfig({
   transform: translateY(-1px);
 }
 
-/* TOC가 숨겨질 때 */
-body.toc-hidden .right-sidebar-container {
-  display: none !important;
-}
-
-/* 콘텐츠 영역 확장 */
-body.toc-hidden .main-frame {
-  padding-right: 1rem !important;
-}
+/* TOC 동작은 TwoColumnContent.astro 컴포넌트에서 처리 */
+/* Overlay 방식: fixed position + transform으로 슬라이드 */
 ```
 
 ### 3.5 핵심 포인트

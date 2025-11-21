@@ -13,12 +13,13 @@ Before/After 코드 블록을 좌우로 배치하여 비교를 쉽게 하기 위
 
 ### 2. **TOC (목차) 토글 기능**
 - 우측 상단의 "📋 목차" 버튼으로 목차 표시/숨김 가능
-- 키보드 단축키: `Ctrl + \` (Windows/Linux) 또는 `Cmd + \` (Mac)
+- 키보드 단축키: `Ctrl + /` (Windows/Linux) 또는 `Cmd + /` (Mac)
 - 설정은 로컬 스토리지에 저장되어 페이지 이동 시에도 유지됨
+- **Overlay 방식**: TOC가 콘텐츠 위에 떠있어서 숨기면 전체 너비 확보
 
 ### 3. **확장된 콘텐츠 너비**
 - 기존 `50rem`에서 `75rem`으로 확장하여 더 넓은 코드 비교 공간 제공
-- TOC를 숨기면 더 넓은 화면 활용 가능
+- TOC를 숨기면 메인 콘텐츠가 전체 너비 사용 (overlay 방식)
 
 ## SideBySide 컴포넌트 사용법
 
@@ -159,6 +160,29 @@ import SideBySide from '../../../../components/SideBySide.astro';
 }
 ```
 
+### SideBySide 패널 제목 색상
+
+패널 제목은 테마에 따라 자동으로 최적화된 색상을 사용합니다:
+
+**Light theme**: 밝은 배경 + 진한 텍스트 (가독성 우선)
+**Dark theme**: 중간 톤 배경 + 밝은 텍스트 (눈부심 방지)
+
+`src/components/SideBySide.astro`에서 커스터마이징 가능:
+
+```css
+/* Light theme */
+:global([data-theme='light']) .panel-title {
+  background: rgba(99, 102, 241, 0.08);
+  color: rgb(30, 27, 75);
+}
+
+/* Dark theme */
+:global([data-theme='dark']) .panel-title {
+  background: rgba(129, 140, 248, 0.15);
+  color: rgb(199, 210, 254);
+}
+```
+
 ### 반응형 중단점
 
 SideBySide 컴포넌트의 반응형 중단점은 `1200px`입니다:
@@ -172,14 +196,16 @@ SideBySide 컴포넌트의 반응형 중단점은 `1200px`입니다:
 ### 사용 방법
 
 1. **버튼 클릭**: 우측 상단의 "📋 목차" 버튼 클릭
-2. **키보드 단축키**: `Ctrl + \` (Windows/Linux) 또는 `Cmd + \` (Mac)
+2. **키보드 단축키**: `Ctrl + /` (Windows/Linux) 또는 `Cmd + /` (Mac)
 
 ### 동작 원리
 
+- **Overlay 방식**: TOC가 `position: fixed`로 화면 우측에 고정
+- 숨김 시 `translateX(100%)`로 화면 밖으로 슬라이드
 - 상태는 `localStorage`에 저장되어 브라우저를 닫아도 유지됨
 - `toc-hidden` 클래스를 `<body>`에 토글
-- CSS의 `display: none`으로 TOC를 숨김
-- 콘텐츠 영역이 자동으로 확장됨
+- 메인 콘텐츠는 항상 전체 너비 사용 (레이아웃 변경 없음)
+- `TwoColumnContent.astro` 컴포넌트 override로 구현
 
 ### 커스터마이징
 

@@ -48,12 +48,23 @@ const { leftTitle = "Before (Angular)", rightTitle = "After (React 18+)" } = Ast
   .panel-title {
     margin: 0 !important;
     padding: 0.5rem 0.75rem;
-    background: var(--sl-color-accent-low);
     border-radius: 0.5rem 0.5rem 0 0;
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--sl-color-white);
     line-height: 1.5;
+    border-bottom: 2px solid var(--sl-color-hairline);
+  }
+
+  /* Light theme: 밝은 배경에 진한 텍스트 */
+  :global([data-theme='light']) .panel-title {
+    background: rgba(99, 102, 241, 0.08);
+    color: rgb(30, 27, 75);
+  }
+
+  /* Dark theme: 어두운 배경에 밝은 텍스트 */
+  :global([data-theme='dark']) .panel-title {
+    background: rgba(129, 140, 248, 0.15);
+    color: rgb(199, 210, 254);
   }
 
   .panel-content {
