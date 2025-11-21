@@ -1,5 +1,5 @@
 ---
-// Custom TwoColumnContent component with TOC toggle support
+// Custom TwoColumnContent component with TOC overlay toggle support
 // Overrides @astrojs/starlight default TwoColumnContent component
 
 // Type assertion for Starlight locals
@@ -26,18 +26,21 @@ const { starlightRoute } = Astro.locals as any;
 		}
 
 		@media (min-width: 72rem) {
+			/* TOC를 Overlay로 변경 - 항상 fixed position으로 우측에 배치 */
 			.right-sidebar-container {
-				order: 2;
-				position: relative;
-				width: calc(
-					var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2
-				);
-				transition: width 0.3s ease, opacity 0.3s ease;
+				position: fixed;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: var(--sl-sidebar-width);
+				z-index: 100;
+				transition: transform 0.3s ease;
+				background: var(--sl-color-bg);
+				box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 			}
 
 			.right-sidebar {
-				position: fixed;
-				top: 0;
+				position: relative;
 				border-inline-start: 1px solid var(--sl-color-hairline);
 				padding-top: var(--sl-nav-height);
 				width: 100%;
@@ -46,40 +49,35 @@ const { starlightRoute } = Astro.locals as any;
 				scrollbar-width: none;
 			}
 
+			/* 메인 패널은 항상 전체 너비 사용 */
 			.main-pane {
 				width: 100%;
-				transition: width 0.3s ease;
 			}
 
 			:global([data-has-sidebar][data-has-toc]) .main-pane {
-				--sl-content-margin-inline: auto 0;
-
-				order: 1;
-				width: calc(
-					var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2
-				);
-			}
-
-			/* TOC 토글 상태: TOC 숨김 */
-			:global(body.toc-hidden) .right-sidebar-container {
-				width: 0 !important;
-				opacity: 0;
-				pointer-events: none;
-			}
-
-			/* TOC 토글 상태: 메인 패널 확장 */
-			:global(body.toc-hidden[data-has-sidebar][data-has-toc]) .main-pane {
-				width: 100% !important;
 				--sl-content-margin-inline: auto;
+				width: 100%;
 			}
 
-			/* TOC 숨김 시 콘텐츠 최대 너비 확장 */
-			:global(body.toc-hidden) main {
-				max-width: none !important;
+			/* TOC 숨김 상태: 우측으로 슬라이드 아웃 */
+			:global(body.toc-hidden) .right-sidebar-container {
+				transform: translateX(100%);
 			}
 
-			:global(body.toc-hidden) .content-panel {
-				max-width: none !important;
+			/* TOC 표시 상태: 기본 위치 */
+			:global(body:not(.toc-hidden)) .right-sidebar-container {
+				transform: translateX(0);
+			}
+		}
+
+		/* 태블릿 이하에서는 기존 동작 유지 */
+		@media (max-width: 71.99rem) {
+			.right-sidebar-container {
+				display: none;
+			}
+
+			.main-pane {
+				width: 100%;
 			}
 		}
 	}
