@@ -50,29 +50,8 @@
   transform: translateY(0);
 }
 
-/* TOC가 숨겨질 때 */
-body.toc-hidden .right-sidebar-container {
-  display: none !important;
-}
-
-/* TOC가 숨겨질 때 콘텐츠 영역 확장 */
-body.toc-hidden .main-frame {
-  padding-right: 1rem !important;
-}
-
-/* Starlight의 page grid layout 조정 - TOC 공간 제거 */
-body.toc-hidden .page {
-  grid-template-columns: var(--sl-sidebar-width) 1fr !important;
-}
-
-/* 콘텐츠 최대 너비 확장 */
-body.toc-hidden .content-panel {
-  max-width: none !important;
-}
-
-body.toc-hidden main.main-pane {
-  max-width: 100% !important;
-}
+/* TOC 토글 상태는 TwoColumnContent.astro 컴포넌트에서 처리 */
+/* 여기서는 추가적인 스타일 조정만 수행 */
 
 /* ============================================
    코드 블록 스타일 개선

@@ -22,6 +22,7 @@ export default defineConfig({
       ],
       components: {
         Head: './src/components/Head.astro',
+        TwoColumnContent: './src/components/TwoColumnContent.astro',
       },
       sidebar: [
         {
