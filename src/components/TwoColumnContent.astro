@@ -72,6 +72,15 @@ const { starlightRoute } = Astro.locals as any;
 				width: 100% !important;
 				--sl-content-margin-inline: auto;
 			}
+
+			/* TOC 숨김 시 콘텐츠 최대 너비 확장 */
+			:global(body.toc-hidden) main {
+				max-width: none !important;
+			}
+
+			:global(body.toc-hidden) .content-panel {
+				max-width: none !important;
+			}
 		}
 	}
 </style>
