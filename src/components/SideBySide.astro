@@ -34,29 +34,34 @@ const { leftTitle = "Before (Angular)", rightTitle = "After (React 18+)" } = Ast
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    align-items: start;
+    align-items: stretch;
   }
 
   .side-by-side-panel {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
     height: 100%;
+    position: relative;
   }
 
   .panel-title {
-    margin: 0 0 0.75rem 0;
+    margin: 0;
     padding: 0.5rem 0.75rem;
     background: var(--sl-color-accent-low);
     border-radius: 0.5rem 0.5rem 0 0;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--sl-color-white);
+    line-height: 1.5;
   }
 
   .panel-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-top: 0.75rem;
+    background: var(--sl-color-bg-inline);
+    border-radius: 0 0 0.5rem 0.5rem;
   }
 
   /* 슬롯 내부의 div 정렬 */
@@ -64,40 +69,34 @@ const { leftTitle = "Before (Angular)", rightTitle = "After (React 18+)" } = Ast
     display: flex;
     flex-direction: column;
     flex: 1;
+    padding: 0 0.75rem;
   }
 
-  /* 슬롯 내부의 모든 제목 정렬 */
+  /* 슬롯 내부의 모든 제목 정렬 - 완전히 통일 */
   .panel-content :global(h1),
   .panel-content :global(h2),
   .panel-content :global(h3),
   .panel-content :global(h4) {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.75rem 0;
+    padding: 0;
+    line-height: 1.5;
   }
 
   /* 코드 블록 스타일 조정 */
   .panel-content :global(pre) {
-    margin: 0;
-    border-radius: 0 0 0.5rem 0.5rem;
-    height: 100%;
+    margin: 0.5rem 0;
+    border-radius: 0.375rem;
     overflow: auto;
   }
 
-  /* 첫 번째 요소의 상단 마진 제거 */
-  .panel-content :global(> *:first-child),
-  .panel-content :global(> div > *:first-child) {
-    margin-top: 0 !important;
-  }
-
-  /* 마지막 요소의 하단 마진 제거 */
-  .panel-content :global(> *:last-child),
-  .panel-content :global(> div > *:last-child) {
-    margin-bottom: 0;
-  }
-
-  /* 코드 블록 앞의 제목 간격 조정 */
+  /* 첫 번째 코드 블록의 상단 마진 */
   .panel-content :global(h3 + pre) {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  /* 마지막 코드 블록의 하단 패딩 */
+  .panel-content :global(> div) {
+    padding-bottom: 0.75rem;
   }
 
   /* 반응형: 좁은 화면에서는 세로 배치 */
