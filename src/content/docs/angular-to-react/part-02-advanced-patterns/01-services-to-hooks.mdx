@@ -5,6 +5,8 @@ sidebar:
   order: 1
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular의 Injectable 서비스를 React의 Custom Hooks로 변환하는 완벽한 가이드입니다.
 
 ## 개요
@@ -27,7 +29,9 @@ Angular의 Injectable 서비스를 React의 Custom Hooks로 변환하는 완벽�
 
 ### 1. 기본 HTTP 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 // user.service.ts
 @Injectable({ providedIn: 'root' })
@@ -44,7 +48,9 @@ export class UserService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 // hooks/useUsers.ts
 import axios from 'axios';
@@ -66,6 +72,9 @@ export const useUsers = () => {
   return { users, loading, fetchUsers };
 };
 ```
+
+  </div>
+</SideBySide>
 
 ### 2. React Query 버전 (권장)
 
@@ -109,7 +118,9 @@ export const useUpdateUser = () => {
 
 ### 3. 인증 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -133,7 +144,9 @@ export class AuthService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 import { createContext, useContext, useState } from 'react';
 
@@ -183,9 +196,14 @@ export const useAuth = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 4. 로컬 스토리지 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class StorageService {
@@ -204,7 +222,9 @@ export class StorageService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useLocalStorage = <T,>(key: string, initialValue: T) => {
   const [value, setValue] = useState<T>(() => {
@@ -242,9 +262,14 @@ export const useLocalStorage = <T,>(key: string, initialValue: T) => {
 const [theme, setTheme, removeTheme] = useLocalStorage('theme', 'light');
 ```
 
+  </div>
+</SideBySide>
+
 ### 5. WebSocket 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
@@ -265,7 +290,9 @@ export class WebSocketService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useWebSocket = (url: string) => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -297,9 +324,14 @@ export const useWebSocket = (url: string) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 6. 폼 검증 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
@@ -317,7 +349,9 @@ export class ValidationService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useValidation = () => {
   const validateEmail = useCallback((email: string) => {
@@ -356,9 +390,14 @@ export const useLoginForm = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 7. 타이머/인터벌 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class TimerService {
@@ -372,7 +411,9 @@ export class TimerService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(callback);
@@ -394,9 +435,14 @@ const [count, setCount] = useState(0);
 useInterval(() => setCount(c => c + 1), 1000);
 ```
 
+  </div>
+</SideBySide>
+
 ### 8. 알림 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -412,7 +458,9 @@ export class NotificationService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface Notification {
   id: string;
@@ -456,9 +504,14 @@ export const useNotification = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 9. 페이지네이션 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class PaginationService {
@@ -474,7 +527,9 @@ export class PaginationService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const usePagination = <T,>(items: T[], pageSize: number = 10) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -504,9 +559,14 @@ export const usePagination = <T,>(items: T[], pageSize: number = 10) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 10. 파일 업로드 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class FileUploadService {
@@ -524,7 +584,9 @@ export class FileUploadService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useFileUpload = () => {
   const [progress, setProgress] = useState(0);
@@ -561,9 +623,14 @@ export const useFileUpload = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 11. 검색/필터 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class SearchService {
@@ -578,7 +645,9 @@ export class SearchService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useSearch = <T,>(items: T[], fields: (keyof T)[]) => {
   const [query, setQuery] = useState('');
@@ -601,9 +670,14 @@ export const useSearch = <T,>(items: T[], fields: (keyof T)[]) => {
 const { query, setQuery, filteredItems } = useSearch(users, ['name', 'email']);
 ```
 
+  </div>
+</SideBySide>
+
 ### 12. 디바운스 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class DebounceService {
@@ -617,7 +691,9 @@ export class DebounceService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useDebounce = <T,>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -644,9 +720,14 @@ useEffect(() => {
 }, [debouncedSearchTerm]);
 ```
 
+  </div>
+</SideBySide>
+
 ### 13. 권한 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
@@ -662,7 +743,9 @@ export class PermissionService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 const PermissionContext = createContext<{
   permissions: string[];
@@ -697,9 +780,14 @@ export const usePermission = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 14. 캐시 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React (React Query를 사용하는 것이 더 좋음)">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class CacheService {
@@ -721,7 +809,9 @@ export class CacheService {
 }
 ```
 
-**React (React Query를 사용하는 것이 더 좋음)**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useCache = <T,>(
   key: string,
@@ -737,9 +827,14 @@ export const useCache = <T,>(
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 15. 로깅 서비스
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class LoggerService {
@@ -755,7 +850,9 @@ export class LoggerService {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const useLogger = () => {
   const log = useCallback((message: string, ...args: any[]) => {
@@ -777,6 +874,9 @@ export const useLogger = () => {
   return { log, error, warn };
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 

@@ -5,6 +5,8 @@ sidebar:
   order: 2
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Jasmine/Karma 테스트를 Jest와 React Testing Library로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -24,7 +26,8 @@ Jasmine/Karma 테스트를 Jest와 React Testing Library로 변환하는 방법�
 
 ## 패턴 1: 기본 컴포넌트 테스트
 
-### Before (Angular + Jasmine)
+<SideBySide leftTitle="Angular + Jasmine" rightTitle="React + Jest + RTL">
+  <div slot="left">
 
 ```typescript
 // user.component.spec.ts
@@ -66,7 +69,8 @@ describe('UserComponent', () => {
 });
 ```
 
-### After (React + Jest + RTL)
+  </div>
+  <div slot="right">
 
 ```typescript
 // User.test.tsx
@@ -95,6 +99,9 @@ describe('User', () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 **주요 변경**:
 - `TestBed.configureTestingModule` → `render()`
 - `fixture.detectChanges()` → 불필요 (자동 감지)
@@ -103,7 +110,8 @@ describe('User', () => {
 
 ## 패턴 2: Async 테스트
 
-### Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React + RTL">
+  <div slot="left">
 
 ```typescript
 it('should load user data', fakeAsync(() => {
@@ -127,7 +135,8 @@ it('should load user data', async () => {
 });
 ```
 
-### After (React + RTL)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { render, screen, waitFor } from '@testing-library/react';
@@ -156,6 +165,9 @@ it('should load user data', async () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 **주요 변경**:
 - `fakeAsync` + `tick` → `waitFor` 또는 `findBy*`
 - `fixture.whenStable()` → `waitFor(() => {})`
@@ -163,7 +175,8 @@ it('should load user data', async () => {
 
 ## 패턴 3: Service 모킹
 
-### Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React + MSW - Mock Service Worker">
+  <div slot="left">
 
 ```typescript
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -199,7 +212,8 @@ describe('UserComponent', () => {
 });
 ```
 
-### After (React + MSW - Mock Service Worker)
+  </div>
+  <div slot="right">
 
 ```typescript
 // src/mocks/handlers.ts
@@ -255,6 +269,9 @@ it('should handle error', async () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - 실제 HTTP 요청처럼 동작
 - 재사용 가능한 mock 핸들러
@@ -262,7 +279,8 @@ it('should handle error', async () => {
 
 ## 패턴 4: Form 테스트
 
-### Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React + RTL">
+  <div slot="left">
 
 ```typescript
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -304,7 +322,8 @@ describe('LoginComponent', () => {
 });
 ```
 
-### After (React + RTL)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -361,11 +380,15 @@ describe('LoginForm', () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 **권장**: `fireEvent` 대신 `userEvent` 사용 (더 현실적인 사용자 상호작용)
 
 ## 패턴 5: Router 테스트
 
-### Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React + React Router + RTL">
+  <div slot="left">
 
 ```typescript
 import { RouterTestingModule } from '@angular/router/testing';
@@ -398,7 +421,8 @@ describe('NavigationComponent', () => {
 });
 ```
 
-### After (React + React Router + RTL)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { render, screen } from '@testing-library/react';
@@ -436,9 +460,13 @@ describe('Navigation', () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 6: Context/Provider 테스트
 
-### Before (Angular DI)
+<SideBySide leftTitle="Angular DI" rightTitle="React Context">
+  <div slot="left">
 
 ```typescript
 describe('UserComponent', () => {
@@ -467,7 +495,8 @@ describe('UserComponent', () => {
 });
 ```
 
-### After (React Context)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { render, screen } from '@testing-library/react';
@@ -522,6 +551,9 @@ it('should use wrapper', () => {
   expect(screen.getByText('John')).toBeInTheDocument();
 });
 ```
+
+  </div>
+</SideBySide>
 
 ## 패턴 7: Custom Hook 테스트
 
@@ -652,7 +684,8 @@ describe('UserForm accessibility', () => {
 
 ## 패턴 10: Coverage 설정
 
-### Before (Angular + Karma)
+<SideBySide leftTitle="Angular + Karma" rightTitle="Jest">
+  <div slot="left">
 
 ```javascript
 // karma.conf.js
@@ -671,7 +704,8 @@ module.exports = function(config) {
 };
 ```
 
-### After (Jest)
+  </div>
+  <div slot="right">
 
 ```javascript
 // jest.config.js
@@ -706,6 +740,9 @@ module.exports = {
   }
 }
 ```
+
+  </div>
+</SideBySide>
 
 ### Vitest 설정
 

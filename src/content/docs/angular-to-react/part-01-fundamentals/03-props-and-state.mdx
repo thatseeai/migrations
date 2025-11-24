@@ -8,6 +8,8 @@ sidebar:
     variant: "success"
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular의 `@Input`/`@Output`과 클래스 필드를 React의 Props와 `useState`로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -25,9 +27,11 @@ Angular의 `@Input`/`@Output`과 클래스 필드를 React의 Props와 `useState
 | 로컬 상태 | 클래스 필드 | `useState` |
 | 양방향 바인딩 | `[(ngModel)]` | 제어 컴포넌트 패턴 |
 
-## Before (Angular)
+<SideBySide leftTitle="Angular" rightTitle="React 18+">
+  <div slot="left">
 
 ### @Input / @Output
+
 ```typescript
 // parent.component.ts
 import { Component } from '@angular/core';
@@ -93,9 +97,11 @@ export class ChildComponent {
 }
 ```
 
-## After (React 18+)
+  </div>
+  <div slot="right">
 
 ### Props & Callbacks
+
 ```typescript
 // Parent.tsx
 import { FC, useState } from 'react';
@@ -153,11 +159,16 @@ export const Child: FC<ChildProps> = ({
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 변환 패턴
 
 ### 1. Input Props (단순 값)
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Input() name!: string;
 @Input() age: number = 0;
@@ -165,7 +176,9 @@ export const Child: FC<ChildProps> = ({
 @Input() user?: User;
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface ComponentProps {
   name: string;
@@ -184,9 +197,14 @@ const Component: FC<ComponentProps> = ({
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 2. Output 이벤트 → 콜백 Props
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 @Output() onClick = new EventEmitter<void>();
 @Output() onSave = new EventEmitter<User>();
@@ -201,7 +219,9 @@ handleSave(user: User): void {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface ComponentProps {
   onClick: () => void;
@@ -224,9 +244,14 @@ const Component: FC<ComponentProps> = ({
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 3. 로컬 상태 (Class Field → useState)
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class TodoComponent {
   todos: Todo[] = [];
@@ -253,7 +278,9 @@ export class TodoComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface Todo {
   id: number;
@@ -293,15 +320,22 @@ export const TodoComponent: FC = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 4. 양방향 바인딩 → 제어 컴포넌트
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```html
 <input [(ngModel)]="username" type="text" />
 <p>Hello, {{ username }}</p>
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```tsx
 const [username, setUsername] = useState('');
 
@@ -316,6 +350,9 @@ return (
   </>
 );
 ```
+
+  </div>
+</SideBySide>
 
 ## 고급 패턴
 
@@ -348,7 +385,9 @@ setItems(prev => prev.map(item =>
 
 ### 2. 여러 State를 하나로 그룹화
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React - 방법 1: 개별 State">
+  <div slot="left">
+
 ```typescript
 export class FormComponent {
   name = '';
@@ -358,13 +397,18 @@ export class FormComponent {
 }
 ```
 
-**React - 방법 1: 개별 State**
+  </div>
+  <div slot="right">
+
 ```typescript
 const [name, setName] = useState('');
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [errors, setErrors] = useState<Record<string, string>>({});
 ```
+
+  </div>
+</SideBySide>
 
 **React - 방법 2: 단일 객체 State (권장)**
 ```typescript
@@ -390,7 +434,9 @@ const updateField = (field: keyof FormState, value: any) => {
 
 ### 3. Derived State (파생 상태)
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class ProductComponent {
   @Input() products: Product[] = [];
@@ -405,7 +451,9 @@ export class ProductComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 interface ProductProps {
   products: Product[];
@@ -430,11 +478,16 @@ export const ProductComponent: FC<ProductProps> = ({ products }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 실전 예제
 
 ### 예제 1: 폼 처리
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class LoginComponent {
   username = '';
@@ -457,7 +510,9 @@ export class LoginComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const LoginComponent: FC = () => {
   const [username, setUsername] = useState('');
@@ -501,9 +556,14 @@ export const LoginComponent: FC = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ### 예제 2: 토글 상태
 
-**Angular**
+<SideBySide leftTitle="Angular" rightTitle="React">
+  <div slot="left">
+
 ```typescript
 export class AccordionComponent {
   isOpen = false;
@@ -514,7 +574,9 @@ export class AccordionComponent {
 }
 ```
 
-**React**
+  </div>
+  <div slot="right">
+
 ```typescript
 export const Accordion: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -531,6 +593,9 @@ export const Accordion: FC = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 

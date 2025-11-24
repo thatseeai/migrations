@@ -5,6 +5,8 @@ sidebar:
   order: 1
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular 템플릿 문법을 React JSX로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -25,7 +27,8 @@ Angular 템플릿 문법을 React JSX로 변환하는 방법을 다룹니다.
 
 ## 패턴 1: 보간 (Interpolation)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -48,7 +51,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -70,13 +74,17 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주요 변경**:
 - `{{ }}` → `{ }` (단일 중괄호)
 - 모든 JS 표현식 사용 가능
 
 ## 패턴 2: 속성 바인딩 (Property Binding)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -102,7 +110,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -129,6 +138,9 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **차이점**:
 - `[attr]="value"` → `attr={value}`
 - `attr.` prefix 불필요
@@ -136,7 +148,8 @@ export const MyComponent = () => {
 
 ## 패턴 3: 이벤트 바인딩 (Event Binding)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -177,7 +190,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -219,6 +233,9 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **중요 변경**:
 - `(click)` → `onClick` (camelCase)
 - `(input)` → `onChange` (React 컨벤션)
@@ -227,7 +244,8 @@ export const MyComponent = () => {
 
 ## 패턴 4: 양방향 바인딩 (Two-way Binding)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -245,7 +263,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -271,13 +290,17 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주요 차이**:
 - `[(ngModel)]` → `value` + `onChange`
 - React는 명시적 양방향 바인딩
 
 ## 패턴 5: 조건부 렌더링 (*ngIf)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -317,7 +340,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -353,6 +377,9 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **패턴 요약**:
 - `*ngIf="cond"` → `{cond && <div>}`
 - `*ngIf else` → `{cond ? <A> : <B>}`
@@ -360,7 +387,8 @@ export const MyComponent = () => {
 
 ## 패턴 6: 리스트 렌더링 (*ngFor)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -401,7 +429,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -443,6 +472,9 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **핵심 차이**:
 - `*ngFor` → `.map()`
 - `trackBy` → `key` prop (필수!)
@@ -450,7 +482,8 @@ export const MyComponent = () => {
 
 ## 패턴 7: 클래스 바인딩
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -476,7 +509,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -517,6 +551,9 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **Best Practice**: `classnames` 라이브러리 사용
 
 ```typescript
@@ -529,7 +566,8 @@ import classNames from 'classnames';
 
 ## 패턴 8: 스타일 바인딩
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -551,7 +589,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -584,6 +623,9 @@ const styles = {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주의사항**:
 - camelCase 사용 (`font-size` → `fontSize`)
 - 숫자는 자동으로 `px` 추가 (일부 속성)
@@ -591,7 +633,8 @@ const styles = {
 
 ## 패턴 9: Pipe → 함수/라이브러리
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -619,7 +662,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -660,6 +704,9 @@ const truncate = (str: string, length: number) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **권장 라이브러리**:
 - 날짜: `date-fns` 또는 `dayjs`
 - 통화: `Intl.NumberFormat`
@@ -667,7 +714,8 @@ const truncate = (str: string, length: number) => {
 
 ## 패턴 10: ng-container & ng-template
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -696,7 +744,8 @@ export class MyComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -728,13 +777,17 @@ export const MyComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **차이점**:
 - `ng-container` → `<>...</>` (Fragment)
 - `ng-template` → 별도 컴포넌트 또는 함수
 
 ## 패턴 11: Content Projection (ng-content)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // card.component.ts
@@ -769,7 +822,8 @@ export class CardComponent {}
 export class ParentComponent {}
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // Card.tsx
@@ -802,6 +856,9 @@ export const ParentComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - 더 명시적
 - TypeScript 타입 지원 우수
@@ -809,7 +866,8 @@ export const ParentComponent = () => {
 
 ## 패턴 12: 특수 속성 변환
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Component({
@@ -828,7 +886,8 @@ export const ParentComponent = () => {
 })
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 export const MyComponent = () => {
@@ -850,6 +909,9 @@ export const MyComponent = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 **예약어 변경**:
 - `class` → `className`

@@ -8,6 +8,8 @@ sidebar:
     variant: "success"
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular CLI로 생성된 프로젝트를 React 프로젝트로 변환하는 완벽한 가이드입니다.
 
 ## 개요
@@ -25,7 +27,8 @@ Angular CLI로 생성된 프로젝트를 React 프로젝트로 변환하는 완�
 | 설정 파일 | `angular.json` | `vite.config.ts` / `package.json` |
 | 엔트리 포인트 | `main.ts` | `main.tsx` / `index.tsx` |
 
-## Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React 18+ with Vite)">
+  <div slot="left">
 
 ### 프로젝트 구조
 ```
@@ -48,7 +51,7 @@ my-angular-app/
 └── e2e/
 ```
 
-### package.json (Angular)
+### package.json
 ```json
 {
   "name": "my-angular-app",
@@ -81,7 +84,8 @@ my-angular-app/
 }
 ```
 
-## After (React 18+ with Vite)
+  </div>
+  <div slot="right">
 
 ### 프로젝트 구조
 ```
@@ -101,7 +105,7 @@ my-react-app/
 └── public/
 ```
 
-### package.json (React)
+### package.json
 ```json
 {
   "name": "my-react-app",
@@ -155,6 +159,9 @@ export default defineConfig({
   },
 });
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 단계
 
@@ -232,7 +239,9 @@ npm install -D @vitejs/plugin-react vite vitest
 
 ### 4단계: 엔트리 포인트 변환
 
-**Angular: src/main.ts**
+<SideBySide leftTitle="Angular: src/main.ts" rightTitle="React: src/main.tsx">
+  <div slot="left">
+
 ```typescript
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
@@ -241,7 +250,9 @@ platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 ```
 
-**React: src/main.tsx**
+  </div>
+  <div slot="right">
+
 ```typescript
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -255,9 +266,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 ```
 
+  </div>
+</SideBySide>
+
 ### 5단계: HTML 템플릿 조정
 
-**Angular: src/index.html**
+<SideBySide leftTitle="Angular: src/index.html" rightTitle="React: index.html">
+  <div slot="left">
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -273,7 +289,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 </html>
 ```
 
-**React: index.html**
+  </div>
+  <div slot="right">
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -289,6 +307,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </body>
 </html>
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 
@@ -338,7 +359,9 @@ import { useState, useEffect } from 'react';
 
 ### 환경 변수 처리
 
-**Angular: environment.ts**
+<SideBySide leftTitle="Angular: environment.ts" rightTitle="React: .env">
+  <div slot="left">
+
 ```typescript
 export const environment = {
   production: false,
@@ -346,7 +369,16 @@ export const environment = {
 };
 ```
 
-**React: .env**
+**사용 방법**
+```typescript
+import { environment } from './environments/environment';
+
+const apiUrl = environment.apiUrl;
+```
+
+  </div>
+  <div slot="right">
+
 ```bash
 VITE_API_URL=http://localhost:3000/api
 ```
@@ -359,6 +391,9 @@ const apiUrl = import.meta.env.VITE_API_URL;
 // CRA
 const apiUrl = process.env.REACT_APP_API_URL;
 ```
+
+  </div>
+</SideBySide>
 
 ## 디렉토리 구조 권장사항
 

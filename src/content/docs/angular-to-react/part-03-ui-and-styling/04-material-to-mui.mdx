@@ -5,6 +5,8 @@ sidebar:
   order: 4
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular Material 컴포넌트를 Material-UI (MUI) v5로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -37,7 +39,8 @@ npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
 
 ## 패턴 1: Button
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 <button mat-button>Basic</button>
@@ -51,7 +54,8 @@ npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
 </button>
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { Button, IconButton, Fab } from '@mui/material';
@@ -68,6 +72,9 @@ import { Favorite as FavoriteIcon, Add as AddIcon } from '@mui/icons-material';
 </Fab>
 ```
 
+  </div>
+</SideBySide>
+
 **주요 변경**:
 - `mat-button` → `variant="text"`
 - `mat-raised-button` → `variant="contained"`
@@ -75,7 +82,8 @@ import { Favorite as FavoriteIcon, Add as AddIcon } from '@mui/icons-material';
 
 ## 패턴 2: Form Field + Input
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 <mat-form-field appearance="outline">
@@ -88,7 +96,8 @@ import { Favorite as FavoriteIcon, Add as AddIcon } from '@mui/icons-material';
 </mat-form-field>
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { TextField } from '@mui/material';
@@ -109,9 +118,13 @@ const [error, setError] = useState('');
 />
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 3: Card
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 <mat-card>
@@ -129,7 +142,8 @@ const [error, setError] = useState('');
 </mat-card>
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { Card, CardHeader, CardContent, CardActions, Button } from '@mui/material';
@@ -149,9 +163,13 @@ import { Card, CardHeader, CardContent, CardActions, Button } from '@mui/materia
 </Card>
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 4: Dialog
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 // Component
@@ -188,7 +206,8 @@ export class ConfirmDialogComponent {
 }
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
@@ -225,9 +244,13 @@ export const DialogExample = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 5: Table
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 <table mat-table [dataSource]="dataSource">
@@ -246,7 +269,8 @@ export const DialogExample = () => {
 </table>
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import {
@@ -288,9 +312,13 @@ export const UserTable = ({ users }: { users: User[] }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 6: Select
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 <mat-form-field>
@@ -303,7 +331,8 @@ export const UserTable = ({ users }: { users: User[] }) => {
 </mat-form-field>
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
@@ -324,9 +353,13 @@ const [selectedValue, setSelectedValue] = useState('');
 </FormControl>
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 7: Snackbar (Toast)
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```typescript
 export class SnackBarExample {
@@ -342,7 +375,8 @@ export class SnackBarExample {
 }
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { Snackbar, Button } from '@mui/material';
@@ -373,9 +407,13 @@ export const SnackbarExample = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 8: Theme 설정
 
-### Before (Angular Material)
+<SideBySide leftTitle="Before (Angular Material)" rightTitle="After (MUI)">
+  <div slot="left">
 
 ```scss
 @use '@angular/material' as mat;
@@ -390,7 +428,8 @@ $my-theme: mat.define-light-theme((
 @include mat.all-component-themes($my-theme);
 ```
 
-### After (MUI)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -418,6 +457,9 @@ export const App = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 마이그레이션 체크리스트
 

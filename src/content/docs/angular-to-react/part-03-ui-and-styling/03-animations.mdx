@@ -5,6 +5,8 @@ sidebar:
   order: 3
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular Animations를 React의 애니메이션 솔루션으로 변환하는 방법을 다룹니다.
 
 ## 개요
@@ -23,7 +25,8 @@ Angular Animations를 React의 애니메이션 솔루션으로 변환하는 방�
 
 ## 패턴 1: 기본 Fade In/Out
 
-### Before (Angular Animations)
+<SideBySide leftTitle="Before (Angular Animations)" rightTitle="After (Framer Motion)">
+  <div slot="left">
 
 ```typescript
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -52,7 +55,8 @@ export class FadeComponent {
 }
 ```
 
-### After (Framer Motion)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { AnimatePresence, motion } from 'framer-motion';
@@ -77,6 +81,9 @@ export const Fade = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주요 차이**:
 - `trigger` → `motion` 컴포넌트
 - `:enter/:leave` → `initial/animate/exit`
@@ -84,7 +91,8 @@ export const Fade = () => {
 
 ## 패턴 2: Slide 애니메이션
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (Framer Motion)">
+  <div slot="left">
 
 ```typescript
 trigger('slideInOut', [
@@ -98,7 +106,8 @@ trigger('slideInOut', [
 ])
 ```
 
-### After (Framer Motion)
+  </div>
+  <div slot="right">
 
 ```typescript
 <motion.div
@@ -111,9 +120,13 @@ trigger('slideInOut', [
 </motion.div>
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 3: 리스트 애니메이션
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (Framer Motion)">
+  <div slot="left">
 
 ```typescript
 trigger('listAnimation', [
@@ -128,7 +141,8 @@ trigger('listAnimation', [
 ])
 ```
 
-### After (Framer Motion)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { motion } from 'framer-motion';
@@ -179,9 +193,13 @@ export const ListAnimation = ({ items }: { items: Item[] }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 ## 패턴 4: Route 전환 애니메이션
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (Framer Motion + React Router)">
+  <div slot="left">
 
 ```typescript
 trigger('routeAnimations', [
@@ -205,7 +223,8 @@ trigger('routeAnimations', [
 ])
 ```
 
-### After (Framer Motion + React Router)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { AnimatePresence, motion } from 'framer-motion';
@@ -241,6 +260,9 @@ export const AnimatedRoutes = () => {
   );
 };
 ```
+
+  </div>
+</SideBySide>
 
 ## 패턴 5: Gesture 애니메이션 (Drag, Hover)
 

@@ -5,6 +5,8 @@ sidebar:
   order: 2
 ---
 
+import SideBySide from '../../../../components/SideBySide.astro';
+
 Angular의 의존성 주입(DI) 시스템을 React의 Context API와 Props로 대체하는 방법을 다룹니다.
 
 ## 개요
@@ -25,7 +27,8 @@ Angular의 의존성 주입(DI) 시스템을 React의 Context API와 Props로 �
 
 ## 패턴 1: 기본 Service → Context 변환
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // services/theme.service.ts
@@ -64,7 +67,8 @@ export class HeaderComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/ThemeContext.tsx
@@ -123,6 +127,9 @@ export const App = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **개선사항**:
 - 코드 50% 감소 (BehaviorSubject 제거)
 - 런타임 에러 가능성 감소 (undefined 체크)
@@ -130,7 +137,8 @@ export const App = () => {
 
 ## 패턴 2: 계층적 Providers (Multi-level Injection)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // 앱 레벨 서비스
@@ -160,7 +168,8 @@ export class FormComponent {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/AppProviders.tsx
@@ -223,6 +232,9 @@ export const FormComponent = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주요 차이점**:
 - React는 Provider 중첩으로 계층 구조 표현
 - 더 명시적이고 시각적으로 이해하기 쉬움
@@ -230,7 +242,8 @@ export const FormComponent = () => {
 
 ## 패턴 3: Optional Injection (선택적 의존성)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Injectable()
@@ -247,7 +260,8 @@ export class AnalyticsService {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/AnalyticsContext.tsx
@@ -295,6 +309,9 @@ export const App = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - 선택적 의존성을 명시적으로 관리
 - undefined 체크 자동화
@@ -302,7 +319,8 @@ export const App = () => {
 
 ## 패턴 4: Factory Provider Pattern
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // factory 함수
@@ -322,7 +340,8 @@ export function createApiService(config: AppConfig): ApiService {
 export class AppModule {}
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/ApiContext.tsx
@@ -361,6 +380,9 @@ export const App = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **주의사항**:
 - Provider 순서가 중요 (의존성 그래프 준수)
 - useMemo로 불필요한 재생성 방지
@@ -368,7 +390,8 @@ export const App = () => {
 
 ## 패턴 5: Token-based Injection (@Inject 변환)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // token 정의
@@ -389,7 +412,8 @@ export class UserService {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // 방법 1: 타입별 Context
@@ -426,6 +450,9 @@ export const useUserService = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **권장 방법**:
 - 환경 변수는 Context 대신 `import.meta.env` 사용
 - 단순 상수는 일반 export 사용
@@ -433,7 +460,8 @@ export const useUserService = () => {
 
 ## 패턴 6: forRoot/forChild 패턴 변환
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @NgModule({})
@@ -473,7 +501,8 @@ export class AppModule {}
 export class LazyModule {}
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/FeatureContext.tsx
@@ -522,6 +551,9 @@ export const App = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **차이점**:
 - React는 Provider 계층으로 설정 전파
 - forChild는 단순히 같은 Provider 내부에 위치
@@ -529,7 +561,8 @@ export const App = () => {
 
 ## 패턴 7: Testing with DI
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 describe('UserComponent', () => {
@@ -558,7 +591,8 @@ describe('UserComponent', () => {
 });
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 import { render, screen, waitFor } from '@testing-library/react';
@@ -591,6 +625,9 @@ describe('UserComponent', () => {
 });
 ```
 
+  </div>
+</SideBySide>
+
 **장점**:
 - Provider를 직접 제공하여 간단하게 테스트
 - Mock 객체 생성이 더 간단
@@ -598,7 +635,8 @@ describe('UserComponent', () => {
 
 ## 패턴 8: 전역 단일 인스턴스 (Singleton)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @Injectable({ providedIn: 'root' }) // 자동으로 singleton
@@ -613,7 +651,8 @@ export class GlobalStateService {
 }
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // contexts/GlobalStateContext.tsx
@@ -654,6 +693,9 @@ export const App = () => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **Best Practice**:
 - useMemo로 value 최적화 (불필요한 리렌더 방지)
 - useCallback로 함수 메모이제이션
@@ -661,7 +703,8 @@ export const App = () => {
 
 ## 패턴 9: Lazy Provider (Dynamic Import)
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 // lazy-loaded module
@@ -679,7 +722,8 @@ const routes: Routes = [
 export class AdminModule {}
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // App.tsx - Lazy component
@@ -714,6 +758,9 @@ export const AdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 ```
 
+  </div>
+</SideBySide>
+
 **성능 효과**:
 - 초기 번들 크기 30-50% 감소
 - 필요한 시점에만 로드
@@ -721,7 +768,8 @@ export const AdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 ## 패턴 10: 다중 Provider 합성
 
-### Before (Angular)
+<SideBySide leftTitle="Before (Angular)" rightTitle="After (React)">
+  <div slot="left">
 
 ```typescript
 @NgModule({
@@ -736,7 +784,8 @@ export const AdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
 export class AppModule {}
 ```
 
-### After (React)
+  </div>
+  <div slot="right">
 
 ```typescript
 // providers/AppProviders.tsx
@@ -790,6 +839,9 @@ export const AppProviders = composeProviders(
   NotificationProvider
 );
 ```
+
+  </div>
+</SideBySide>
 
 **장점**:
 - Provider 지옥(Provider Hell) 방지
